@@ -4,7 +4,7 @@ import { UserData } from '../../models/user-data.model';
 
 @Component({
   selector: 'app-export-data',
-  templateUrl: './export-data.component.html',
+  templateUrl: './export-data.html',
 })
 export class ExportData {
   // Data de ejemplo (para rellenar por ahora)
