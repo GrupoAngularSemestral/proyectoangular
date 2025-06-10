@@ -1,0 +1,30 @@
+<div class="goal-list">
+    <h2>Your Goals</h2>
+    
+    <div *ngIf="goals.length === 0" class="no-goals">
+      <p>You don't have any goals yet. Create one to get started!</p>
+    </div>
+  
+    <div *ngFor="let goal of goals" class="goal-card" [class.completed]="goal.isCompleted">
+      <div class="goal-header">
+        <h3>{{ goal.title }}</h3>
+        <span class="category-badge">{{ goal.category }}</span>
+        <button (click)="deleteGoal(goal.id)" class="delete-btn">×</button>
+      </div>
+      
+      <p>{{ goal.description }}</p>
+      
+      <div class="progress-container">
+        <div class="progress-bar" [style.width.%]="(goal.currentValue / goal.targetValue) * 100">
+          {{ goal.currentValue | number:'1.0-0' }}/{{ goal.targetValue | number:'1.0-0' }}
+        </div>
+      </div>
+      
+      <div class="goal-dates">
+        <span>Start: {{ goal.startDate | date }}</span>
+        <span>End: {{ goal.endDate | date }}</span>
+      </div>
+    </div>
+  
+    <app-goal-form (goalAdded)="goals = goalService.getGoals()"></app-goal-form>
+  </div>

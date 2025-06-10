@@ -1,0 +1,41 @@
+<form (ngSubmit)="onSubmit()" class="goal-form">
+    <h3>Create New Goal</h3>
+    
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input type="text" id="title" [(ngModel)]="newGoal.title" name="title" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" [(ngModel)]="newGoal.description" name="description"></textarea>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label for="targetValue">Target Value</label>
+        <input type="number" id="targetValue" [(ngModel)]="newGoal.targetValue" name="targetValue" min="1" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" [(ngModel)]="newGoal.category" name="category">
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label for="startDate">Start Date</label>
+        <input type="date" id="startDate" [(ngModel)]="newGoal.startDate" name="startDate" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="endDate">End Date</label>
+        <input type="date" id="endDate" [(ngModel)]="newGoal.endDate" name="endDate" required>
+      </div>
+    </div>
+    
+    <button type="submit" class="submit-btn">Create Goal</button>
+  </form>

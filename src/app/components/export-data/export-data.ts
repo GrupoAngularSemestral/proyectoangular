@@ -19,7 +19,8 @@ export class ExportData {
     ],
     sleepRecords: [],
     reminders: [],
-    achievements: []
+    achievements: [],
+    goals: []
   };
 
   constructor(private exportService: ExportDataService) {}
