@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { ExportDataService } from '../../services/export-data';
 import { UserData } from '../../models/user-data.model';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-export-data',
   templateUrl: './export-data.html',
+  imports: [MatIconModule]
 })
 export class ExportData {
   // Data de ejemplo (para rellenar por ahora)
