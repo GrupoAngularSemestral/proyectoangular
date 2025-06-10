@@ -1,3 +1,9 @@
 <!-- export-data.component.html -->
-<button (click)="exportCSV()">Exportar a CSV</button>
-<button (click)="exportPDF()">Exportar a PDF</button>
+<div class="export-buttons">
+    <button mat-raised-button color="primary" (click)="exportCSV()">
+        <mat-icon>file_download</mat-icon> Exportar to CSV
+    </button>
+    <button mat-raised-button color="accent" (click)="exportPDF()">
+        <mat-icon>picture_as_pdf</mat-icon> Exportar to PDF
+    </button>
+</div>
