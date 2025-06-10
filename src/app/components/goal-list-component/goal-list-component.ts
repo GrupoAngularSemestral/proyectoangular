@@ -1,16 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { GoalService } from '../../services/goal-service';
 import { Goal } from '../../models/user-data.model';
+import { GoalFormComponent } from '../goal-form-component/goal-form-component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-goal-list',
-  templateUrl: './goal-list.component.html',
-  styleUrls: ['./goal-list.component.css']
+  templateUrl: './goal-list-component.html',
+  styleUrls: ['./goal-list-component.css'],
+  imports: [ GoalFormComponent, CommonModule ]
 })
 export class GoalListComponent implements OnInit {
   goals: Goal[] = [];
 
-  constructor(private goalService: GoalService) {}
+  constructor(public goalService: GoalService) {}
 
   ngOnInit(): void {
     this.goals = this.goalService.getGoals();

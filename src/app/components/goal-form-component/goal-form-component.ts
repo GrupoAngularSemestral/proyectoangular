@@ -1,11 +1,14 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { Goal } from '../../models/user-data.model';
 import { GoalService } from '../../services/goal-service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-goal-form',
-  templateUrl: './goal-form.component.html',
-  styleUrls: ['./goal-form.component.css']
+  templateUrl: './goal-form-component.html',
+  styleUrls: ['./goal-form-component.css'],
+  imports: [ CommonModule, FormsModule ]
 })
 export class GoalFormComponent {
   categories: Goal['category'][] = [
