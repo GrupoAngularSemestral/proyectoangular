@@ -1,0 +1,131 @@
+.main-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 2.5rem 1.2rem 2rem;
+  background: #111;
+  border-bottom: 1.5px solid #ececec;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo-section {
+  display: flex;
+  align-items: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: #fff;
+}
+.logo-smart {
+  color: #222;
+}
+.logo-fit {
+  color: #ffcb05;
+  font-weight: 700;
+  margin-left: 0.1em;
+  font-family: 'Arial Black', Arial, sans-serif;
+}
+.logo-fittrack {
+  color: #fff;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+.logo-track {
+  color: #ffcb05;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-left: 0.1em;
+  font-family: 'Arial Black', Arial, sans-serif;
+}
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 2.2rem;
+}
+.main-nav a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 500;
+  transition: color 0.2s;
+  padding: 0.2rem 0.5rem;
+}
+.main-nav a.active,
+.main-nav a:hover {
+  color: #ffcb05;
+}
+.cta-btn {
+  background: #ffcb05;
+  color: #222;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-left: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.cta-btn:hover {
+  background: #fff;
+  color: #111;
+}
+.menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: none;
+  border: none;
+  margin-left: 1.2rem;
+  cursor: pointer;
+}
+.menu-btn span {
+  display: block;
+  width: 1.8rem;
+  height: 0.22rem;
+  background: #fff;
+  margin: 0.22rem 0;
+  border-radius: 2px;
+}
+.contact-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-left: 2rem;
+  color: #fff;
+}
+.contact-info span {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: #fff;
+  gap: 0.4rem;
+}
+.contact-info .icon {
+  font-size: 1.2rem;
+  color: #ffcb05;
+}
+@media (max-width: 900px) {
+  .main-nav {
+    gap: 1.2rem;
+  }
+  .main-header {
+    padding: 1rem 1rem 1rem 1rem;
+  }
+  .contact-info {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .main-nav a, .cta-btn {
+    display: none;
+  }
+  .menu-btn {
+    display: flex;
+  }
+}

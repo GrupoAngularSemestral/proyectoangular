@@ -1,0 +1,236 @@
+.dashboard-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #ffcb05 60%, #fff 100%);
+  border-radius: 1.2rem;
+  margin: 2.5rem 0 0 0;
+  padding: 2.5rem 3rem;
+  min-height: 320px;
+  box-shadow: 0 4px 24px 0 rgba(255, 203, 5, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+.banner-content {
+  max-width: 540px;
+  z-index: 2;
+}
+.dashboard-banner h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 0.7rem;
+}
+.banner-highlight {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #fff;
+  background: #222;
+  display: inline-block;
+  padding: 0.2em 0.7em;
+  border-radius: 0.5em;
+  margin-bottom: 1.2rem;
+}
+.banner-desc {
+  font-size: 1.15rem;
+  color: #222;
+  margin-bottom: 2rem;
+}
+.banner-cta {
+  background: #222;
+  color: #ffcb05;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.8rem 2.2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.banner-cta:hover {
+  background: #ffcb05;
+  color: #222;
+  border: 1.5px solid #222;
+}
+.banner-graphic {
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle at 60% 40%, #fff 0%, #ffcb05 80%);
+  border-radius: 50%;
+  position: absolute;
+  right: 2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.7;
+  z-index: 1;
+}
+@media (max-width: 900px) {
+  .dashboard-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem 1.2rem;
+    min-height: 220px;
+  }
+  .banner-graphic {
+    display: none;
+  }
+}
+.dashboard-actions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1.2rem;
+}
+.dashboard-btn {
+  background: #ffcb05;
+  color: #222;
+  border: none;
+  border-radius: 1.2rem;
+  padding: 0.7rem 1.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px rgba(255,203,5,0.08);
+}
+.dashboard-btn:hover {
+  background: #ffe066;
+  color: #111;
+}
+.welcome-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to right, #ffcc00, #fff6d1);
+  padding: 3rem;
+  border-radius: 20px;
+  margin: 2rem auto;
+  max-width: 1200px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-text {
+  max-width: 600px;
+}
+
+.welcome-text h1 {
+  font-size: 2.5rem;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-text h1 span {
+  color: #ffb300;
+  font-weight: bold;
+}
+
+.welcome-text h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.welcome-text p {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 2rem;
+}
+
+.welcome-buttons button {
+  background-color: #222;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  margin-right: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.welcome-buttons button:hover {
+  background-color: #ffb300;
+  color: #000;
+}
+
+.welcome-image img {
+  width: 350px;
+  border-radius: 12px;
+}
+
+.bienvenida {
+  text-align: center;
+  padding: 2rem;
+}
+
+.bienvenida-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to right, #ffcc00, #fff6d1);
+  padding: 3rem;
+  border-radius: 20px;
+  margin: 2rem auto;
+  max-width: 1200px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.bienvenida-texto {
+  max-width: 600px;
+}
+
+.bienvenida-texto h1 {
+  font-size: 2.5rem;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+
+.bienvenida-texto h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.bienvenida-texto p {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 2rem;
+}
+
+.welcome-buttons button {
+  background-color: #222;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  margin-right: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.welcome-buttons button:hover {
+  background-color: #ffb300;
+  color: #000;
+}
+
+.bienvenida-imagen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagen-bienvenida {
+  max-width: 350px;
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 900px) {
+  .bienvenida-flex {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .bienvenida-imagen {
+    margin-top: 2rem;
+  }
+}

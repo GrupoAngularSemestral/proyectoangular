@@ -1,0 +1,5 @@
+/* Estilos para la página de exportar datos */
+h1 { color: #222; font-size: 2rem; margin-bottom: 1rem; }
+p { color: #444; margin-bottom: 1.5rem; }
+button { margin-right: 1rem; background: #ffcb05; color: #222; border: none; border-radius: 1.2rem; padding: 0.7rem 1.5rem; font-weight: 700; cursor: pointer; }
+button:hover { background: #ffe066; }
