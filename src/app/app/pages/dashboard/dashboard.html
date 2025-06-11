@@ -10,8 +10,48 @@
       <button>Ver progreso</button>
       <button>Ver logros</button>
     </div>
-    <div *ngIf="showHabitForm" class="habit-form-modal">
-      <app-habits></app-habits>
+    <div *ngIf="showHabitForm" class="habit-form-modal" style="box-shadow: 0 4px 24px 0 rgba(0,0,0,0.10); background: linear-gradient(120deg, #fffbe6 80%, #ffe066 100%); border-radius: 18px; padding: 2.5rem 2rem 2rem 2rem; max-width: 520px; margin-top: 2.5rem;">
+      <h2 style="font-size: 1.5rem; color: #222; font-weight: 700; margin-bottom: 1.2rem; letter-spacing: -1px;">Registrar nuevo hábito</h2>
+      <form (ngSubmit)="addHabit()" style="display: flex; flex-wrap: wrap; gap: 1.2rem 2rem; align-items: flex-end;">
+        <label style="flex: 1 1 180px; display: flex; flex-direction: column; font-weight: 500; font-size: 1rem;">
+          Nombre
+          <input [(ngModel)]="newHabit.name" name="name" required style="margin-top: 0.25rem; padding: 0.5rem 0.7rem; border-radius: 6px; border: 1px solid #e0c800; background: #fff; font-size: 1rem;" />
+        </label>
+        <label style="flex: 1 1 180px; display: flex; flex-direction: column; font-weight: 500; font-size: 1rem;">
+          Tipo
+          <select [(ngModel)]="newHabit.type" name="type" style="margin-top: 0.25rem; padding: 0.5rem 0.7rem; border-radius: 6px; border: 1px solid #e0c800; background: #fff; font-size: 1rem;">
+            <option value="exercise">Ejercicio</option>
+            <option value="water">Agua</option>
+            <option value="sleep">Sueño</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </label>
+        <label style="flex: 1 1 100px; display: flex; flex-direction: column; font-weight: 500; font-size: 1rem;">
+          Meta
+          <input type="number" [(ngModel)]="newHabit.goal" name="goal" required min="1" style="margin-top: 0.25rem; padding: 0.5rem 0.7rem; border-radius: 6px; border: 1px solid #e0c800; background: #fff; font-size: 1rem;" />
+        </label>
+        <label style="flex: 1 1 100px; display: flex; flex-direction: column; font-weight: 500; font-size: 1rem;">
+          Unidad
+          <input [(ngModel)]="newHabit.unit" name="unit" required style="margin-top: 0.25rem; padding: 0.5rem 0.7rem; border-radius: 6px; border: 1px solid #e0c800; background: #fff; font-size: 1rem;" />
+        </label>
+        <label style="flex: 1 1 160px; display: flex; flex-direction: column; font-weight: 500; font-size: 1rem;">
+          Frecuencia
+          <select [(ngModel)]="newHabit.frequency" name="frequency" style="margin-top: 0.25rem; padding: 0.5rem 0.7rem; border-radius: 6px; border: 1px solid #e0c800; background: #fff; font-size: 1rem;">
+            <option value="daily">Diario</option>
+            <option value="weekly">Semanal</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </label>
+        <label style="flex-direction: row; align-items: center; min-width: unset; font-weight: 500; font-size: 1rem; margin-top: 0.7rem;">
+          <input type="checkbox" [(ngModel)]="newHabit.reminderEnabled" name="reminderEnabled" style="margin-right: 0.5rem;" />
+          Activar recordatorio
+        </label>
+        <label *ngIf="newHabit.reminderEnabled" style="flex: 1 1 160px; display: flex; flex-direction: column; font-weight: 500; font-size: 1rem;">
+          Hora del recordatorio
+          <input type="time" [(ngModel)]="newHabit.reminderTime" name="reminderTime" style="margin-top: 0.25rem; padding: 0.5rem 0.7rem; border-radius: 6px; border: 1px solid #e0c800; background: #fff; font-size: 1rem;" />
+        </label>
+        <button type="submit" style="background: linear-gradient(90deg, #ffcb05 60%, #ffe066 100%); color: #111; border: none; border-radius: 8px; padding: 0.7rem 1.7rem; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 0.5rem; box-shadow: 0 2px 8px #ffe06655; transition: background 0.2s; align-self: flex-end;">Agregar hábito</button>
+      </form>
     </div>
   </div>
   <div class="bienvenida-imagen">

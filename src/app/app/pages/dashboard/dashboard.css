@@ -234,3 +234,32 @@
     margin-top: 2rem;
   }
 }
+.habit-form-modal {
+  background: #fffbe6;
+  box-shadow: none !important;
+  border-radius: 18px;
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 520px;
+  margin-top: 2.5rem;
+  background-image: none !important;
+}
+.habit-form-modal button[type="submit"] {
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.7rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 8px #0003;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  align-self: flex-end;
+  opacity: 1;
+}
+.habit-form-modal button[type="submit"]:hover {
+  background: #222;
+  color: #ffe066;
+  box-shadow: 0 4px 16px #0005;
+}

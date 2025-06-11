@@ -22,6 +22,7 @@ export class Habits implements OnInit {
     createdAt: new Date(),
     updatedAt: new Date()
   };
+  editingHabitId: string | null = null;
 
   constructor(private habitService: HabitService) {}
 
@@ -30,13 +31,23 @@ export class Habits implements OnInit {
   }
 
   addHabit() {
-    const habit: HabitModel = {
-      ...this.newHabit,
-      id: Date.now().toString(),
-      createdAt: new Date(),
-      updatedAt: new Date()
-    } as HabitModel;
-    this.habitService.addHabit(habit);
+    if (this.editingHabitId) {
+      // Guardar edición
+      this.habitService.updateHabit(this.editingHabitId, {
+        ...this.newHabit,
+        updatedAt: new Date()
+      });
+      this.editingHabitId = null;
+    } else {
+      // Agregar nuevo hábito
+      const habit: HabitModel = {
+        ...this.newHabit,
+        id: Date.now().toString(),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as HabitModel;
+      this.habitService.addHabit(habit);
+    }
     this.habits = this.habitService.getHabits();
     this.newHabit = {
       name: '',
@@ -48,5 +59,30 @@ export class Habits implements OnInit {
       createdAt: new Date(),
       updatedAt: new Date()
     };
+  }
+
+  editHabit(habit: HabitModel) {
+    this.editingHabitId = habit.id;
+    this.newHabit = { ...habit };
+  }
+
+  deleteHabit(id: string) {
+    if (confirm('¿Estás seguro de que deseas eliminar este hábito?')) {
+      this.habitService.deleteHabit(id);
+      this.habits = this.habitService.getHabits();
+      if (this.editingHabitId === id) {
+        this.editingHabitId = null;
+        this.newHabit = {
+          name: '',
+          type: 'custom',
+          goal: 1,
+          unit: '',
+          frequency: 'daily',
+          reminderEnabled: false,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+      }
+    }
   }
 }

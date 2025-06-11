@@ -1,46 +1,106 @@
-<div class="habit-form-modal">
-  <h2>Registrar nuevo hábito</h2>
-  <form (ngSubmit)="addHabit()">
-    <label>Nombre
-      <input [(ngModel)]="newHabit.name" name="name" required />
-    </label>
-    <label>Tipo
-      <select [(ngModel)]="newHabit.type" name="type">
-        <option value="exercise">Ejercicio</option>
-        <option value="water">Agua</option>
-        <option value="sleep">Sueño</option>
-        <option value="custom">Personalizado</option>
-      </select>
-    </label>
-    <label>Meta
-      <input type="number" [(ngModel)]="newHabit.goal" name="goal" required min="1" />
-    </label>
-    <label>Unidad
-      <input [(ngModel)]="newHabit.unit" name="unit" required />
-    </label>
-    <label>Frecuencia
-      <select [(ngModel)]="newHabit.frequency" name="frequency">
-        <option value="daily">Diario</option>
-        <option value="weekly">Semanal</option>
-        <option value="custom">Personalizado</option>
-      </select>
-    </label>
-    <label style="flex-direction: row; align-items: center; min-width: unset;">
-      <input type="checkbox" [(ngModel)]="newHabit.reminderEnabled" name="reminderEnabled" />
-      Activar recordatorio
-    </label>
-    <label *ngIf="newHabit.reminderEnabled">Hora del recordatorio
-      <input type="time" [(ngModel)]="newHabit.reminderTime" name="reminderTime" />
-    </label>
-    <button type="submit">Agregar hábito</button>
-  </form>
-  <div class="habit-list">
-    <h2>Mis hábitos</h2>
-    <ul>
-      <li *ngFor="let habit of habits">
-        <strong>{{ habit.name }}</strong> ({{ habit.type }}) - {{ habit.goal }} {{ habit.unit }} - {{ habit.frequency }}
-        <span *ngIf="habit.reminderEnabled">⏰ {{ habit.reminderTime }}</span>
+<div class="habit-list">
+  <h2>Mis hábitos</h2>
+  <ng-container *ngIf="habits.length > 0; else noHabits">
+    <ul class="habit-detailed-list">
+      <li *ngFor="let habit of habits" class="habit-detailed-item">
+        <div class="habit-header">
+          <span class="habit-name">{{ habit.name }}</span>
+          <span class="habit-type">({{ habit.type }})</span>
+        </div>
+        <div class="habit-details">
+          <span><b>Meta:</b> {{ habit.goal }} {{ habit.unit }}</span>
+          <span><b>Frecuencia:</b> {{ habit.frequency }}</span>
+          <span *ngIf="habit.reminderEnabled"><b>Recordatorio:</b> {{ habit.reminderTime }}</span>
+          <span class="habit-date"><b>Creado:</b> {{ habit.createdAt | date:'shortDate' }}</span>
+        </div>
+        <div class="habit-actions">
+          <button (click)="editHabit(habit)" class="edit-btn">✏️ Editar</button>
+          <button (click)="deleteHabit(habit.id)" class="delete-btn">🗑️ Eliminar</button>
+        </div>
       </li>
     </ul>
-  </div>
+  </ng-container>
+  <ng-template #noHabits>
+    <div class="no-habits-msg">No hay ningún hábito registrado.</div>
+  </ng-template>
 </div>
+
+<style>
+.habit-list {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+.habit-detailed-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.habit-detailed-item {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0001;
+  margin-bottom: 1.2rem;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.habit-header {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #222;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.habit-type {
+  background: #ffe066;
+  color: #111;
+  border-radius: 6px;
+  padding: 0.1em 0.7em;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.habit-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-size: 1rem;
+  color: #444;
+}
+.habit-date {
+  color: #888;
+  font-size: 0.95rem;
+}
+.habit-actions {
+  margin-top: 0.7rem;
+  display: flex;
+  gap: 1rem;
+}
+.edit-btn, .delete-btn {
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 1.1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.edit-btn:hover {
+  background: #0076ff;
+}
+.delete-btn:hover {
+  background: #d32f2f;
+}
+.no-habits-msg {
+  color: #888;
+  font-size: 1.1rem;
+  padding: 2rem 0 1rem 0;
+  text-align: center;
+}
+</style>

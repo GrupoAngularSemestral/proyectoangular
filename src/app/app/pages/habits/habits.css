@@ -38,18 +38,25 @@
 }
 .habit-form-modal button[type="submit"] {
   background: #111;
-  color: #ffe066;
+  color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  padding: 0.7rem 1.7rem;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 1.1rem;
   cursor: pointer;
   margin-top: 0.5rem;
-  transition: background 0.2s;
+  box-shadow: 0 2px 8px #0003;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  align-self: flex-end;
+  opacity: 1;
 }
-.habit-form-modal button[type="submit"]:hover {
-  background: #222;
+.habit-form-modal button[type="submit"].edit-mode {
+  background: #0076ff;
+  color: #fff;
+}
+.habit-form-modal button[type="submit"].edit-mode:hover {
+  background: #005bb5;
 }
 .habit-form-modal h2 {
   margin-bottom: 1rem;
