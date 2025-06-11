@@ -6,9 +6,12 @@
       Registra y monitorea tus rutinas de ejercicio, hidratación, sueño y más. Visualiza tu progreso, recibe recordatorios y motívate con logros y recompensas.
     </p>
     <div class="welcome-buttons">
-      <button>Registrar hábito</button>
+      <button (click)="showHabitForm = !showHabitForm">Registrar hábito</button>
       <button>Ver progreso</button>
       <button>Ver logros</button>
+    </div>
+    <div *ngIf="showHabitForm" class="habit-form-modal">
+      <app-habits></app-habits>
     </div>
   </div>
   <div class="bienvenida-imagen">

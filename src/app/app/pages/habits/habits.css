@@ -1,0 +1,68 @@
+/* Mejora de estructura y estilos del formulario de hábitos */
+.habit-form-modal {
+  margin-top: 2rem;
+  background: #fffbe6;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  max-width: 520px;
+  width: 100%;
+}
+.habit-form-modal form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  align-items: flex-end;
+}
+.habit-form-modal label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  font-size: 1rem;
+  min-width: 120px;
+  flex: 1 1 180px;
+}
+.habit-form-modal input[type="text"],
+.habit-form-modal input[type="number"],
+.habit-form-modal input[type="time"],
+.habit-form-modal select {
+  margin-top: 0.25rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #e0c800;
+  background: #fff;
+  font-size: 1rem;
+}
+.habit-form-modal input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+.habit-form-modal button[type="submit"] {
+  background: #111;
+  color: #ffe066;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
+}
+.habit-form-modal button[type="submit"]:hover {
+  background: #222;
+}
+.habit-form-modal h2 {
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  color: #111;
+}
+.habit-form-modal .habit-list {
+  margin-top: 1.5rem;
+}
+.habit-form-modal .habit-list ul {
+  padding-left: 1.2rem;
+}
+.habit-form-modal .habit-list li {
+  margin-bottom: 0.5rem;
+  font-size: 1.05rem;
+}
