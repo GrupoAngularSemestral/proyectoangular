@@ -27,18 +27,24 @@
   font-family: 'Arial Black', Arial, sans-serif;
 }
 .logo-fittrack {
-  color: #fff;
-  font-size: 2.2rem;
-  font-weight: 700;
-  letter-spacing: -1px;
+  /* Degradado de color en el texto */
+  background: linear-gradient(90deg, #ffcb05 30%, #ff6f00 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  font-family: 'Montserrat Black', 'Arial Black', Arial, sans-serif;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.25), 0 1px 0 #fff;
+  border-radius: 8px;
+  padding: 0 0.3em;
+  transition: transform 0.2s;
 }
-.logo-track {
-  color: #ffcb05;
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin-left: 0.1em;
-  font-family: 'Arial Black', Arial, sans-serif;
+.logo-fittrack:hover {
+  transform: scale(1.05) rotate(-2deg);
+  filter: brightness(1.1);
 }
+
 .main-nav {
   display: flex;
   align-items: center;
