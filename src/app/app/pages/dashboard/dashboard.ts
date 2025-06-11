@@ -13,6 +13,7 @@ import { Habit as HabitModel } from '../../../models/habit.model';
 })
 export class Dashboard {
   showHabitForm = false;
+  successMessage = '';
   newHabit: Partial<HabitModel> = {
     name: '',
     type: 'custom',
@@ -34,6 +35,11 @@ export class Dashboard {
       updatedAt: new Date()
     } as HabitModel;
     this.habitService.addHabit(habit);
+    // Mostrar mensaje de éxito
+    this.successMessage = '¡Hábito agregado con éxito!';
+    setTimeout(() => {
+      this.successMessage = '';
+    }, 2500);
     // Resetear el formulario
     this.newHabit = {
       name: '',
