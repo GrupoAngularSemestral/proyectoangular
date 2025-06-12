@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-reminder-list',
-  imports: [],
   templateUrl: './reminder-list.html',
-  styleUrl: './reminder-list.css'
+  styleUrls: ['./reminder-list.css']
 })
-export class ReminderList {
-
+export class ReminderListComponent {
+  @Input() reminders: { time: string, message: string }[] = [];
 }

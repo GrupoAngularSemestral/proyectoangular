@@ -1,0 +1,39 @@
+.habit-card {
+  background: #f9fafe;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+  margin-bottom: 16px;
+  transition: box-shadow 0.3s ease;
+}
+
+.habit-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.streak {
+  font-size: 14px;
+  color: #ff5722;
+  font-weight: 500;
+}
+
+.complete-btn {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #3f51b5;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.complete-btn:hover {
+  background: #2c3e91;
+}

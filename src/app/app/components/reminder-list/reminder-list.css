@@ -1,0 +1,28 @@
+.reminder-list {
+  background: #fefae0;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.reminder-list ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.reminder-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed #ddd;
+}
+
+.time {
+  color: #6d4c41;
+  font-weight: 600;
+}
+
+.message {
+  color: #333;
+}

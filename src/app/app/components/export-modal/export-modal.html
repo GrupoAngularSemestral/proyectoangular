@@ -1,1 +1,8 @@
-<p>export-modal works!</p>
+<div class="modal-overlay" *ngIf="show">
+  <div class="modal-card">
+    <h2>Exportar Datos</h2>
+    <p>Exporta tu progreso en un archivo CSV.</p>
+    <button class="primary-btn" (click)="exportData()">📄 Exportar CSV</button>
+    <button class="secondary-btn" (click)="close()">Cerrar</button>
+  </div>
+</div>

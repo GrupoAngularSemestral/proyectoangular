@@ -1,11 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-habit-card',
-  imports: [],
   templateUrl: './habit-card.html',
-  styleUrl: './habit-card.css'
+  styleUrls: ['./habit-card.css']
 })
-export class HabitCard {
+export class HabitCardComponent {
+  @Input() habitName: string = '';
+  @Input() streak: number = 0;
+  @Input() completedToday: boolean = false;
 
+  toggleComplete() {
+    this.completedToday = !this.completedToday;
+  }
 }

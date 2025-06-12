@@ -1,0 +1,25 @@
+.badge-container {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #e3ffe7 0%, #d9e7ff 100%);
+  border-radius: 12px;
+  padding: 10px 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.badge-container:hover {
+  transform: scale(1.03);
+}
+
+.badge-icon {
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+}
+
+.badge-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2e7d32;
+}

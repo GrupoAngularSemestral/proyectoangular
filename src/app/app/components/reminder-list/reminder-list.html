@@ -1,1 +1,9 @@
-<p>reminder-list works!</p>
+<div class="reminder-list">
+  <h3>⏰ Recordatorios</h3>
+  <ul>
+    <li *ngFor="let reminder of reminders">
+      <span class="time">{{ reminder.time }}</span>
+      <span class="message">{{ reminder.message }}</span>
+    </li>
+  </ul>
+</div>

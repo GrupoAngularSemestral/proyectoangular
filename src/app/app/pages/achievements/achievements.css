@@ -1,3 +1,20 @@
-/* Estilos para la página de logros */
-h1 { color: #222; font-size: 2rem; margin-bottom: 1rem; }
-p { color: #444; }
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.archivements-page h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.badges-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}

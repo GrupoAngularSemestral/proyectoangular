@@ -2,10 +2,9 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-progress',
-  imports: [],
   templateUrl: './progress.html',
-  styleUrl: './progress.css'
+  styleUrls: ['./progress.css']
 })
-export class Progress {
-
+export class ProgressPage {
+  weeklyData = [3, 5, 4, 6, 8, 7, 9];
 }

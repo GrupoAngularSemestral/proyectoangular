@@ -1,1 +1,9 @@
-<p>habit-card works!</p>
+<div class="habit-card">
+  <div class="card-header">
+    <h3>{{ habitName }}</h3>
+    <span class="streak">🔥 {{ streak }} días</span>
+  </div>
+  <button class="complete-btn" (click)="toggleComplete()">
+    {{ completedToday ? '✅ Completado' : '➕ Marcar como hecho' }}
+  </button>
+</div>

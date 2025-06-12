@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-achievement-badge',
-  imports: [],
+  selector: 'app-archivements-badge',
   templateUrl: './achievement-badge.html',
-  styleUrl: './achievement-badge.css'
+  styleUrls: ['./achievement-badge.css']
 })
-export class AchievementBadge {
-
+export class ArchivementsBadgeComponent {
+  @Input() title: string = 'Achievement';
 }
