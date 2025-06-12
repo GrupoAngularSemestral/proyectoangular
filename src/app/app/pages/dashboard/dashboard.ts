@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { HabitService } from '../../services/habit';
 import { Habit as HabitModel } from '../../../models/habit.model';
 
@@ -24,7 +25,7 @@ export class Dashboard {
     reminderTime: ''
   };
 
-  constructor(private habitService: HabitService) {}
+  constructor(private habitService: HabitService, private router: Router) {}
 
   addHabit() {
     // Agregar el hábito usando el servicio compartido
@@ -51,5 +52,9 @@ export class Dashboard {
       reminderTime: ''
     };
     this.showHabitForm = false;
+  }
+
+  goToProgress() {
+    this.router.navigate(['/progress']);
   }
 }

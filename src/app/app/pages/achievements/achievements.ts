@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ArchivementsBadgeComponent } from '../../components/achievement-badge/achievement-badge';
 
 @Component({
-  selector: 'app-archivements',
+  selector: 'app-achievements',
+  standalone: true,
+  imports: [CommonModule, ArchivementsBadgeComponent],
   templateUrl: './achievements.html',
   styleUrls: ['./achievements.css']
 })

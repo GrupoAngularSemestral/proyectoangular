@@ -7,7 +7,7 @@
     </p>
     <div class="welcome-buttons">
       <button (click)="showHabitForm = !showHabitForm">Registrar hábito</button>
-      <button>Ver progreso</button>
+      <button (click)="goToProgress()">Ver progreso</button>
       <button>Ver logros</button>
     </div>
     <div *ngIf="successMessage" class="success-message" style="margin-top: 1rem; color: #388e3c; background: #e8f5e9; border-radius: 8px; padding: 0.7rem 1.2rem; font-weight: 600; text-align: center;">

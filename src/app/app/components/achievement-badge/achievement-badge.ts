@@ -7,4 +7,6 @@ import { Component, Input } from '@angular/core';
 })
 export class ArchivementsBadgeComponent {
   @Input() title: string = 'Achievement';
+  @Input() icon: string = '';
+  @Input() unlocked: boolean = false;
 }

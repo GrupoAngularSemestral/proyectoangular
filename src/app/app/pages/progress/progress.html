@@ -1,4 +1,77 @@
 <section class="progress-page container">
-  <h1>Progreso Semanal</h1>
-  <app-progress-chart [data]="weeklyData"></app-progress-chart>
+  <div class="progress-container">
+    <h2 class="progress-title">Progreso Semanal</h2>
+    <div class="progress-chart-wrapper">
+      <app-progress-chart [data]="weeklyData"></app-progress-chart>
+    </div>
+    <div class="progress-summary">
+      <div class="summary-card">
+        <h3>Mejor día</h3>
+        <p>{{ bestDay.label }}: {{ bestDay.value }}</p>
+      </div>
+      <div class="summary-card">
+        <h3>Promedio semanal</h3>
+        <p>{{ weeklyAverage }}</p>
+      </div>
+      <div class="summary-card">
+        <h3>Total acumulado</h3>
+        <p>{{ totalProgress }}</p>
+      </div>
+    </div>
+  </div>
 </section>
+
+<style>
+.progress-container {
+  max-width: 800px;
+  margin: 2.5rem auto 0 auto;
+  background: #fffbe6;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.10);
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.progress-title {
+  font-size: 2rem;
+  color: #222;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1px;
+}
+.progress-chart-wrapper {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  margin-bottom: 2rem;
+}
+.progress-summary {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  justify-content: center;
+}
+.summary-card {
+  background: #ffe066;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #ffe06655;
+  padding: 1.2rem 2rem;
+  min-width: 160px;
+  text-align: center;
+}
+.summary-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #111;
+  font-weight: 700;
+}
+.summary-card p {
+  font-size: 1.3rem;
+  color: #222;
+  font-weight: 600;
+  margin: 0;
+}
+</style>
