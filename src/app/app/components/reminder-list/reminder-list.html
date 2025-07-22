@@ -1,9 +1,42 @@
-<div class="reminder-list">
-  <h3>⏰ Recordatorios</h3>
-  <ul>
-    <li *ngFor="let reminder of reminders">
-      <span class="time">{{ reminder.time }}</span>
-      <span class="message">{{ reminder.message }}</span>
-    </li>
-  </ul>
+<div class="reminder-list" *ngIf="reminders.length > 0">
+  <div class="reminder-item" *ngFor="let reminder of reminders" [class.disabled]="!reminder.enabled">
+    <div class="reminder-content">
+      <div class="reminder-title">
+        <h4>{{ reminder.habitName }}</h4>
+        <span class="reminder-time">{{ reminder.time }}</span>
+      </div>
+      
+      <div class="reminder-details">
+        <span class="days">{{ getDaysText(reminder.days) }}</span>
+        <span class="message" *ngIf="reminder.message">{{ reminder.message }}</span>
+      </div>
+    </div>
+    
+    <div class="reminder-actions">
+      <button 
+        class="action-btn toggle-btn" 
+        (click)="onToggleReminder(reminder.id)"
+        [title]="reminder.enabled ? 'Desactivar' : 'Activar'">
+        {{ reminder.enabled ? '🔔' : '🔕' }}
+      </button>
+      
+      <button 
+        class="action-btn edit-btn" 
+        (click)="onEditReminder(reminder)"
+        title="Editar">
+        ✏️
+      </button>
+      
+      <button 
+        class="action-btn delete-btn" 
+        (click)="onDeleteReminder(reminder.id)"
+        title="Eliminar">
+        🗑️
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="empty-reminder-list" *ngIf="reminders.length === 0">
+  <p>No hay recordatorios configurados</p>
 </div>

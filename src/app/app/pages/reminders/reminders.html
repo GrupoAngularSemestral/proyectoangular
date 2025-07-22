@@ -1,4 +1,158 @@
 <section class="reminders-page container">
-  <h1>Recordatorios</h1>
-  <app-reminder-list [reminders]="reminders"></app-reminder-list>
+  <div class="page-header">
+    <h1>📅 Recordatorios</h1>
+    <p>Configura notificaciones para mantener la consistencia en tus hábitos</p>
+  </div>
+
+  <!-- Estado de permisos -->
+  <div class="permission-status" *ngIf="!permission.granted">
+    <div class="permission-card">
+      <div class="permission-icon">🔔</div>
+      <div class="permission-content">
+        <h3>Habilita las notificaciones</h3>
+        <p>Para recibir recordatorios, necesitamos tu permiso para mostrar notificaciones.</p>
+        <button class="btn btn-primary" (click)="requestPermission()" [disabled]="permission.requested">
+          {{ permission.requested ? 'Permisos denegados' : 'Permitir notificaciones' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones principales -->
+  <div class="actions-bar" *ngIf="permission.granted">
+    <button class="btn btn-primary" (click)="openCreateModal()">
+      ➕ Nuevo recordatorio
+    </button>
+    <button class="btn btn-secondary" (click)="testNotification()">
+      🧪 Probar notificación
+    </button>
+  </div>
+
+  <!-- Próximos recordatorios -->
+  <div class="upcoming-section" *ngIf="upcomingReminders.length > 0 && permission.granted">
+    <h2>🔜 Próximos recordatorios</h2>
+    <div class="upcoming-list">
+      <div class="upcoming-item" *ngFor="let item of upcomingReminders">
+        <div class="upcoming-time">
+          <span class="date">{{ formatDate(item.nextTime) }}</span>
+          <span class="time">{{ formatTime(item.nextTime) }}</span>
+        </div>
+        <div class="upcoming-content">
+          <h4>{{ item.reminder.habitName }}</h4>
+          <p>{{ item.reminder.message || 'Recordatorio de hábito' }}</p>
+        </div>
+        <div class="upcoming-status">
+          <span class="badge" [class.enabled]="item.reminder.enabled" [class.disabled]="!item.reminder.enabled">
+            {{ item.reminder.enabled ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de todos los recordatorios -->
+  <div class="reminders-section" *ngIf="permission.granted">
+    <h2>📋 Todos los recordatorios</h2>
+    
+    <div class="empty-state" *ngIf="reminders.length === 0">
+      <div class="empty-icon">📅</div>
+      <h3>No tienes recordatorios configurados</h3>
+      <p>Crea tu primer recordatorio para mantener tus hábitos en seguimiento</p>
+      <button class="btn btn-primary" (click)="openCreateModal()">
+        Crear recordatorio
+      </button>
+    </div>
+
+    <app-reminder-list 
+      [reminders]="reminders"
+      (editReminder)="openEditModal($event)"
+      (deleteReminder)="deleteReminder($event)"
+      (toggleReminder)="toggleReminderStatus($event)"
+      *ngIf="reminders.length > 0">
+    </app-reminder-list>
+  </div>
+
+  <!-- Modal para crear/editar recordatorio -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editingReminder ? 'Editar recordatorio' : 'Nuevo recordatorio' }}</h2>
+        <button class="close-btn" (click)="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Selección de hábito -->
+        <div class="form-group">
+          <label for="habitSelect">Hábito *</label>
+          <select 
+            id="habitSelect" 
+            [(ngModel)]="selectedHabitId" 
+            class="form-control"
+            [disabled]="editingReminder !== null">
+            <option value="">Selecciona un hábito</option>
+            <option *ngFor="let habit of habits" [value]="habit.id">
+              {{ habit.name }} ({{ habit.type }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Hora del recordatorio -->
+        <div class="form-group">
+          <label for="reminderTime">Hora del recordatorio *</label>
+          <input 
+            id="reminderTime" 
+            type="time" 
+            [(ngModel)]="reminderTime" 
+            class="form-control">
+        </div>
+
+        <!-- Días de la semana -->
+        <div class="form-group">
+          <label>Días de repetición *</label>
+          <div class="days-selector">
+            <button 
+              type="button"
+              *ngFor="let day of weekDays" 
+              class="day-btn"
+              [class.selected]="isDaySelected(day.id)"
+              (click)="toggleDay(day.id)">
+              {{ day.short }}
+            </button>
+          </div>
+          <small class="form-help">Selecciona los días en que quieres recibir el recordatorio</small>
+        </div>
+
+        <!-- Mensaje personalizado -->
+        <div class="form-group">
+          <label for="customMessage">Mensaje personalizado</label>
+          <textarea 
+            id="customMessage" 
+            [(ngModel)]="customMessage" 
+            class="form-control"
+            rows="3"
+            placeholder="Mensaje que aparecerá en la notificación (opcional)"></textarea>
+        </div>
+
+        <!-- Estado del recordatorio -->
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="reminderEnabled">
+            <span class="checkmark"></span>
+            Recordatorio activo
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeModal()">
+          Cancelar
+        </button>
+        <button class="btn btn-primary" (click)="saveReminder()">
+          {{ editingReminder ? 'Actualizar' : 'Crear' }} recordatorio
+        </button>
+      </div>
+    </div>
+  </div>
 </section>
