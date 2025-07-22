@@ -263,3 +263,57 @@
   color: #ffe066;
   box-shadow: 0 4px 16px #0005;
 }
+
+/* New Welcome Buttons with Icons */
+.welcome-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3498db, #2980b9) !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #2980b9, #21618c) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #27ae60, #219a52) !important;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #219a52, #1e8449) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+}
+
+.btn-tertiary {
+  background: linear-gradient(135deg, #f39c12, #d68910) !important;
+}
+
+.btn-tertiary:hover {
+  background: linear-gradient(135deg, #d68910, #b7760f) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(243, 156, 18, 0.3);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+}
+
+.welcome-buttons button {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  min-width: 180px !important;
+  justify-content: center !important;
+  padding: 1rem 1.5rem !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+}

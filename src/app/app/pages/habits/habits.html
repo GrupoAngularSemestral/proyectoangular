@@ -1,28 +1,252 @@
-<div class="habit-list">
-  <h2>Mis hábitos</h2>
-  <ng-container *ngIf="habits.length > 0; else noHabits">
-    <ul class="habit-detailed-list">
-      <li *ngFor="let habit of habits" class="habit-detailed-item">
-        <div class="habit-header">
-          <span class="habit-name">{{ habit.name }}</span>
-          <span class="habit-type">({{ habit.type }})</span>
+<div class="habits-container">
+  <div class="header-section">
+    <h2>Gestión de Hábitos</h2>
+    
+    <!-- Mensajes de estado -->
+    <div class="messages" *ngIf="errorMessage || successMessage">
+      <div class="error-message" *ngIf="errorMessage">
+        ❌ {{ errorMessage }}
+      </div>
+      <div class="success-message" *ngIf="successMessage">
+        ✅ {{ successMessage }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario para agregar/editar hábitos -->
+  <div class="habit-form">
+    <h3>{{ isEditing ? 'Editar Hábito' : 'Nuevo Hábito' }}</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="name">Nombre del hábito:</label>
+        <input 
+          type="text" 
+          id="name"
+          [(ngModel)]="newHabit.name" 
+          placeholder="Ej: Beber agua, Hacer ejercicio"
+          [disabled]="loading">
+      </div>
+      
+      <div class="form-group">
+        <label for="type">Tipo:</label>
+        <select id="type" [(ngModel)]="newHabit.type" [disabled]="loading">
+          <option value="water">💧 Agua</option>
+          <option value="exercise">💪 Ejercicio</option>
+          <option value="sleep">😴 Sueño</option>
+          <option value="custom">⭐ Personalizado</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="goal">Meta:</label>
+        <input 
+          type="number" 
+          id="goal"
+          [(ngModel)]="newHabit.goal" 
+          min="1"
+          placeholder="8"
+          [disabled]="loading">
+      </div>
+      
+      <div class="form-group">
+        <label for="unit">Unidad:</label>
+        <input 
+          type="text" 
+          id="unit"
+          [(ngModel)]="newHabit.unit" 
+          placeholder="vasos, minutos, horas"
+          [disabled]="loading">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="frequency">Frecuencia:</label>
+        <select id="frequency" [(ngModel)]="newHabit.frequency" [disabled]="loading">
+          <option value="daily">Diario</option>
+          <option value="weekly">Semanal</option>
+          <option value="custom">Personalizado</option>
+        </select>
+      </div>
+      
+      <div class="form-group checkbox-group">
+        <label>
+          <input 
+            type="checkbox" 
+            [(ngModel)]="newHabit.reminderEnabled"
+            [disabled]="loading"> 
+          Activar recordatorio
+        </label>
+      </div>
+    </div>
+
+    <div class="form-row" *ngIf="newHabit.reminderEnabled">
+      <div class="form-group">
+        <label for="reminderTime">Hora del recordatorio:</label>
+        <input 
+          type="time" 
+          id="reminderTime"
+          [(ngModel)]="newHabit.reminderTime"
+          [disabled]="loading">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button 
+        (click)="addHabit()" 
+        [disabled]="loading"
+        class="btn-primary">
+        {{ loading ? '⏳ Procesando...' : buttonText }}
+      </button>
+      
+      <button 
+        *ngIf="isEditing"
+        (click)="cancelEdit()" 
+        [disabled]="loading"
+        class="btn-secondary">
+        Cancelar
+      </button>
+    </div>
+  </div>
+
+  <!-- Lista de hábitos -->
+  <div class="habit-list">
+    <h3>Mis Hábitos ({{ habits.length }})</h3>
+    
+    <div class="loading" *ngIf="loading && habits.length === 0">
+      <p>⏳ Cargando hábitos...</p>
+    </div>
+    
+    <ng-container *ngIf="habits.length > 0; else noHabits">
+      <div class="habits-grid">
+        <div *ngFor="let habit of habits" class="habit-card">
+          <div class="habit-header">
+            <div class="habit-title">
+              <span class="habit-icon">{{ getHabitIcon(habit.type) }}</span>
+              <span class="habit-name">{{ habit.name }}</span>
+            </div>
+            <span class="habit-type">{{ getHabitTypeLabel(habit.type) }}</span>
+          </div>
+          
+          <div class="habit-details">
+            <div class="detail-item">
+              <strong>Meta:</strong> {{ habit.goal }} {{ habit.unit }}
+            </div>
+            <div class="detail-item">
+              <strong>Frecuencia:</strong> {{ getFrequencyLabel(habit.frequency) }}
+            </div>
+            <div class="detail-item" *ngIf="habit.reminderEnabled">
+              <strong>Recordatorio:</strong> {{ habit.reminderTime }}
+            </div>
+            <div class="detail-item">
+              <strong>Creado:</strong> {{ habit.createdAt | date:'shortDate' }}
+            </div>
+          </div>
+          
+          <div class="habit-actions">
+            <button 
+              (click)="abrirModalProgreso(habit)" 
+              class="btn-progress"
+              title="Registrar progreso"
+              [disabled]="loading">
+              📊 Progreso
+            </button>
+            <button 
+              (click)="editHabit(habit)" 
+              class="btn-edit"
+              title="Editar hábito"
+              [disabled]="loading">
+              ✏️ Editar
+            </button>
+            <button 
+              (click)="deleteHabit(habit.id)" 
+              class="btn-delete"
+              title="Eliminar hábito"
+              [disabled]="loading">
+              🗑️ Eliminar
+            </button>
+          </div>
         </div>
-        <div class="habit-details">
-          <span><b>Meta:</b> {{ habit.goal }} {{ habit.unit }}</span>
-          <span><b>Frecuencia:</b> {{ habit.frequency }}</span>
-          <span *ngIf="habit.reminderEnabled"><b>Recordatorio:</b> {{ habit.reminderTime }}</span>
-          <span class="habit-date"><b>Creado:</b> {{ habit.createdAt | date:'shortDate' }}</span>
+      </div>
+    </ng-container>
+    
+    <ng-template #noHabits>
+      <div class="no-habits-msg">
+        <p>📝 No hay ningún hábito registrado.</p>
+        <p>¡Crea tu primer hábito usando el formulario de arriba!</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<!-- Modal de progreso -->
+<div class="modal-overlay" *ngIf="showProgressModal" (click)="cerrarModalProgreso()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Registrar Progreso</h3>
+      <button class="modal-close" (click)="cerrarModalProgreso()">×</button>
+    </div>
+    
+    <div class="modal-body" *ngIf="selectedHabitForProgress">
+      <div class="progress-habit-info">
+        <h4>{{ getHabitIcon(selectedHabitForProgress.type) }} {{ selectedHabitForProgress.name }}</h4>
+        <p>Meta: {{ selectedHabitForProgress.goal }} {{ selectedHabitForProgress.unit }}</p>
+      </div>
+      
+      <div class="progress-form">
+        <div class="form-group">
+          <label for="progressValue">Valor completado:</label>
+          <input 
+            type="number" 
+            id="progressValue"
+            [(ngModel)]="progressValue" 
+            [max]="selectedHabitForProgress.goal * 2"
+            min="0"
+            [placeholder]="'0 - ' + (selectedHabitForProgress.goal * 2)">
+          <small>Máximo recomendado: {{ selectedHabitForProgress.goal }} {{ selectedHabitForProgress.unit }}</small>
         </div>
-        <div class="habit-actions">
-          <button (click)="editHabit(habit)" class="edit-btn">✏️ Editar</button>
-          <button (click)="deleteHabit(habit.id)" class="delete-btn">🗑️ Eliminar</button>
+        
+        <div class="form-group">
+          <label for="progressNotes">Notas (opcional):</label>
+          <textarea 
+            id="progressNotes"
+            [(ngModel)]="progressNotes" 
+            placeholder="Ej: Me sentí bien, fue fácil completarlo..."
+            rows="3"></textarea>
         </div>
-      </li>
-    </ul>
-  </ng-container>
-  <ng-template #noHabits>
-    <div class="no-habits-msg">No hay ningún hábito registrado.</div>
-  </ng-template>
+        
+        <div class="progress-preview" *ngIf="progressValue > 0">
+          <div class="progress-bar">
+            <div 
+              class="progress-fill" 
+              [style.width.%]="Math.min((progressValue / selectedHabitForProgress.goal) * 100, 100)">
+            </div>
+          </div>
+          <p>
+            Progreso: {{ progressValue }}/{{ selectedHabitForProgress.goal }} 
+            ({{ Math.round((progressValue / selectedHabitForProgress.goal) * 100) }}%)
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-actions">
+      <button 
+        (click)="registrarProgreso()" 
+        [disabled]="loading || !progressValue"
+        class="btn-primary">
+        {{ loading ? '⏳ Guardando...' : '💾 Guardar Progreso' }}
+      </button>
+      <button 
+        (click)="cerrarModalProgreso()" 
+        [disabled]="loading"
+        class="btn-secondary">
+        Cancelar
+      </button>
+    </div>
+  </div>
 </div>
 
 <style>

@@ -10,4 +10,15 @@ export interface Habit {
   repeatDays?: string[]; // e.g., ['Monday', 'Wednesday']
   createdAt: Date;
   updatedAt: Date;
+  // Campos para el progreso
+  completions?: ProgressEntry[];
+  completedDates?: string[];
+}
+
+export interface ProgressEntry {
+  id?: string;
+  date: string;
+  value: number;
+  notes?: string;
+  completed: boolean;
 }

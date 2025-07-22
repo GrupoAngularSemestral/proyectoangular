@@ -1,77 +1,140 @@
-<section class="progress-page container">
+<section class="progress-page">
   <div class="progress-container">
-    <h2 class="progress-title">Progreso Semanal</h2>
-    <div class="progress-chart-wrapper">
-      <app-progress-chart [data]="weeklyData"></app-progress-chart>
+    <!-- Header -->
+    <div class="progress-header">
+      <h1>📊 Progreso y Estadísticas</h1>
+      <p>Visualiza tu progreso y descubre patrones en tus hábitos</p>
+      
+      <div class="stats-overview">
+        <div class="stat-card">
+          <div class="stat-number">{{ progressData.stats.totalHabits }}</div>
+          <div class="stat-label">Total Hábitos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ progressData.stats.completedToday }}</div>
+          <div class="stat-label">Completados Hoy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ progressData.stats.currentStreak }}</div>
+          <div class="stat-label">Racha Actual</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ progressData.stats.completionRate }}%</div>
+          <div class="stat-label">Tasa de Éxito</div>
+        </div>
+      </div>
+
+      <button class="btn-reload" (click)="reloadData()" [disabled]="isLoading">
+        🔄 Actualizar
+      </button>
     </div>
-    <div class="progress-summary">
-      <div class="summary-card">
-        <h3>Mejor día</h3>
-        <p>{{ bestDay.label }}: {{ bestDay.value }}</p>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading">
+      <div class="loading-spinner"></div>
+      <p>Cargando datos de progreso...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="error-message">
+      <p>{{ error }}</p>
+      <button class="btn-retry" (click)="reloadData()">Reintentar</button>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!isLoading && !error" class="progress-content">
+      <!-- View Toggle -->
+      <div class="view-toggle">
+        <button 
+          class="toggle-btn"
+          [class.active]="viewMode === 'weekly'"
+          (click)="switchView('weekly')">
+          📅 Semanal
+        </button>
+        <button 
+          class="toggle-btn"
+          [class.active]="viewMode === 'monthly'"
+          (click)="switchView('monthly')">
+          📆 Mensual
+        </button>
       </div>
-      <div class="summary-card">
-        <h3>Promedio semanal</h3>
-        <p>{{ weeklyAverage }}</p>
+
+      <!-- Chart Section -->
+      <div class="chart-section">
+        <h2>{{ viewMode === 'weekly' ? 'Progreso Semanal' : 'Progreso Mensual' }}</h2>
+        <div class="chart-container">
+          <app-progress-chart 
+            [data]="currentData"
+            [labels]="currentLabels">
+          </app-progress-chart>
+        </div>
       </div>
-      <div class="summary-card">
-        <h3>Total acumulado</h3>
-        <p>{{ totalProgress }}</p>
+
+      <!-- Statistics Cards -->
+      <div class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-detail-card">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-info">
+              <h3>Mejor Día</h3>
+              <p>{{ progressData.bestDay.label }}</p>
+              <span class="stat-value">{{ progressData.bestDay.value }} completados</span>
+            </div>
+          </div>
+
+          <div class="stat-detail-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-info">
+              <h3>Racha Más Larga</h3>
+              <span class="stat-value">{{ progressData.stats.longestStreak }} días</span>
+            </div>
+          </div>
+
+          <div class="stat-detail-card">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-info">
+              <h3>Esta Semana</h3>
+              <span class="stat-value">{{ progressData.stats.weeklyCompletions }} completados</span>
+            </div>
+          </div>
+
+          <div class="stat-detail-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-info">
+              <h3>Este Mes</h3>
+              <span class="stat-value">{{ progressData.stats.monthlyCompletions }} completados</span>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- Recent Activity -->
+      <div class="activity-section">
+        <h2>🕒 Actividad Reciente</h2>
+        <div class="activity-timeline">
+          <div 
+            *ngFor="let day of progressData.recentActivity" 
+            class="activity-day">
+            <div class="activity-date">{{ day.date }}</div>
+            <div class="activity-progress">
+              <div class="progress-bar">
+                <div 
+                  class="progress-fill" 
+                  [style.width.%]="day.total > 0 ? (day.completed / day.total) * 100 : 0">
+                </div>
+              </div>
+              <span class="progress-text">{{ day.completed }}/{{ day.total }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && !error && progressData.stats.totalHabits === 0" class="empty-state">
+      <h3>📊 No hay datos de progreso</h3>
+      <p>Crea algunos hábitos para comenzar a ver tu progreso aquí.</p>
+      <button class="btn-primary" routerLink="/habits">Crear Hábito</button>
     </div>
   </div>
 </section>
-
-<style>
-.progress-container {
-  max-width: 800px;
-  margin: 2.5rem auto 0 auto;
-  background: #fffbe6;
-  border-radius: 18px;
-  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.10);
-  padding: 2.5rem 2rem 2rem 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.progress-title {
-  font-size: 2rem;
-  color: #222;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  letter-spacing: -1px;
-}
-.progress-chart-wrapper {
-  width: 100%;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  padding: 1.5rem 1.5rem 1rem 1.5rem;
-  margin-bottom: 2rem;
-}
-.progress-summary {
-  display: flex;
-  gap: 2rem;
-  width: 100%;
-  justify-content: center;
-}
-.summary-card {
-  background: #ffe066;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px #ffe06655;
-  padding: 1.2rem 2rem;
-  min-width: 160px;
-  text-align: center;
-}
-.summary-card h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
-  color: #111;
-  font-weight: 700;
-}
-.summary-card p {
-  font-size: 1.3rem;
-  color: #222;
-  font-weight: 600;
-  margin: 0;
-}
-</style>

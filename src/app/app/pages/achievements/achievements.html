@@ -1,11 +1,106 @@
-<section class="archivements-page container">
-  <h1>Logros desbloqueados 🎉</h1>
-  <div class="badges-list">
-    <app-archivements-badge
-      *ngFor="let badge of badges"
-      [title]="badge.title"
-      [icon]="badge.icon"
-      [unlocked]="badge.unlocked">
-    </app-archivements-badge>
+<div class="achievements-container">
+  <!-- Header -->
+  <div class="achievements-header">
+    <h1>🏆 Logros y Achievements</h1>
+    <p>Desbloquea logros completando hábitos y alcanzando metas</p>
+    
+    <!-- Estadísticas -->
+    <div class="stats-overview">
+      <div class="stat-card">
+        <div class="stat-number">{{ logrosObtenidos.length }}</div>
+        <div class="stat-label">Logros obtenidos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ getTotalPuntos() }}</div>
+        <div class="stat-label">Puntos totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ getPorcentajeCompletado() }}%</div>
+        <div class="stat-label">Completado</div>
+      </div>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getPorcentajeCompletado()"></div>
+      </div>
+      <span class="progress-text">{{ logrosObtenidos.length }} de {{ logrosDisponibles.length + logrosObtenidos.length }} logros</span>
+    </div>
+
+    <!-- Botón de recarga -->
+    <button (click)="recargarLogros()" class="btn-reload" [disabled]="isLoading">
+      <span *ngIf="!isLoading">🔄 Actualizar logros</span>
+      <span *ngIf="isLoading">⏳ Cargando...</span>
+    </button>
   </div>
-</section>
+
+  <!-- Mensajes -->
+  <div class="messages">
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="loading-spinner"></div>
+    <p>Cargando logros...</p>
+  </div>
+
+  <!-- Contenido principal -->
+  <div *ngIf="!isLoading" class="achievements-content">
+    
+    <!-- Logros Obtenidos -->
+    <section *ngIf="logrosObtenidos.length > 0" class="section">
+      <h2>✨ Logros Desbloqueados</h2>
+      <div class="achievements-grid">
+        <div *ngFor="let logro of logrosObtenidos" class="achievement-card unlocked" [ngClass]="getRarezaClass(logro.rareza)">
+          <div class="achievement-icon">{{ logro.icono }}</div>
+          <div class="achievement-info">
+            <h3 class="achievement-title">{{ logro.nombre }}</h3>
+            <p class="achievement-description">{{ logro.descripcion }}</p>
+            <div class="achievement-meta">
+              <span class="achievement-points">+{{ logro.puntos }} puntos</span>
+              <span class="achievement-rarity">{{ logro.rareza | titlecase }}</span>
+              <span *ngIf="logro.fechaObtenido" class="achievement-date">
+                {{ logro.fechaObtenido | date:'dd/MM/yyyy' }}
+              </span>
+            </div>
+          </div>
+          <div class="achievement-status unlocked-badge">
+            ✓ DESBLOQUEADO
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Logros Disponibles -->
+    <section *ngIf="logrosDisponibles.length > 0" class="section">
+      <h2>🎯 Logros Disponibles</h2>
+      <div class="achievements-grid">
+        <div *ngFor="let logro of logrosDisponibles" class="achievement-card locked" [ngClass]="getRarezaClass(logro.rareza)">
+          <div class="achievement-icon locked">{{ logro.icono }}</div>
+          <div class="achievement-info">
+            <h3 class="achievement-title">{{ logro.nombre }}</h3>
+            <p class="achievement-description">{{ logro.descripcion }}</p>
+            <div class="achievement-meta">
+              <span class="achievement-points">+{{ logro.puntos }} puntos</span>
+              <span class="achievement-rarity">{{ logro.rareza | titlecase }}</span>
+            </div>
+          </div>
+          <div class="achievement-status locked-badge">
+            🔒 BLOQUEADO
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Estado vacío -->
+    <div *ngIf="logrosObtenidos.length === 0 && logrosDisponibles.length === 0 && !isLoading" class="empty-state">
+      <div class="empty-icon">🏆</div>
+      <h3>No hay logros disponibles</h3>
+      <p>Los logros aparecerán cuando comiences a registrar hábitos y hacer progreso.</p>
+      <button (click)="recargarLogros()" class="btn-primary">Recargar logros</button>
+    </div>
+  </div>
+</div>
