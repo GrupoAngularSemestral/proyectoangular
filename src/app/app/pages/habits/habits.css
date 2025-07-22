@@ -15,6 +15,34 @@
   font-weight: 700;
 }
 
+/* Acciones del header */
+.header-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btn-refresh {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-refresh:hover {
+  background: #138496;
+}
+
+.btn-refresh:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
 /* Mensajes de estado */
 .messages {
   margin-bottom: 1rem;

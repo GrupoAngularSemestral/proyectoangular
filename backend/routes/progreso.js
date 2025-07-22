@@ -11,8 +11,15 @@ router.post('/', [
     .isInt({ min: 1 })
     .withMessage('habitoId debe ser un número entero mayor a 0'),
   body('valorCompletado')
-    .isInt({ min: 0 })
-    .withMessage('valorCompletado debe ser un número entero mayor o igual a 0'),
+    .isNumeric()
+    .withMessage('valorCompletado debe ser un número válido')
+    .custom((value) => {
+      const num = parseFloat(value);
+      if (num < 0) {
+        throw new Error('valorCompletado debe ser mayor o igual a 0');
+      }
+      return true;
+    }),
   body('fecha')
     .optional()
     .isDate()
@@ -24,8 +31,11 @@ router.post('/', [
     .withMessage('Las notas no pueden exceder 500 caracteres')
 ], async (req, res) => {
   try {
+    console.log('📊 Registrando progreso - Datos recibidos:', JSON.stringify(req.body, null, 2));
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('❌ Errores de validación en progreso:', errors.array());
       return res.status(400).json({
         exito: false,
         mensaje: 'Error en los datos enviados',
@@ -45,7 +55,10 @@ router.post('/', [
       where: { id: habitoId, estaActivo: true }
     });
 
+    console.log(`🔍 Buscando hábito con ID ${habitoId}:`, habito ? `Encontrado: ${habito.nombre}` : 'No encontrado');
+
     if (!habito) {
+      console.log(`❌ Hábito con ID ${habitoId} no encontrado o no está activo`);
       return res.status(404).json({
         exito: false,
         mensaje: 'Hábito no encontrado'
@@ -56,10 +69,14 @@ router.post('/', [
     const porcentajeCompletado = Math.min((valorCompletado / habito.meta) * 100, 100);
     const completado = porcentajeCompletado >= 100;
 
+    console.log(`📈 Calculando progreso: ${valorCompletado}/${habito.meta} = ${porcentajeCompletado.toFixed(1)}% (${completado ? 'COMPLETADO' : 'PENDIENTE'})`);
+
     // Verificar si ya existe un registro para este hábito y fecha
     const registroExistente = await Progreso.findOne({
       where: { habitoId, fecha }
     });
+
+    console.log(`📋 Registro existente para ${fecha}:`, registroExistente ? 'SÍ (actualizando)' : 'NO (creando nuevo)');
 
     let progreso;
     if (registroExistente) {
@@ -72,6 +89,7 @@ router.post('/', [
         notas
       });
       progreso = registroExistente;
+      console.log(`✅ Registro actualizado - ID: ${progreso.id}`);
     } else {
       // Crear nuevo registro
       progreso = await Progreso.create({
@@ -83,7 +101,16 @@ router.post('/', [
         completado,
         notas
       });
+      console.log(`✅ Nuevo registro creado - ID: ${progreso.id}`);
     }
+
+    console.log(`📊 Progreso final:`, {
+      id: progreso.id,
+      habitoId: progreso.habitoId,
+      fecha: progreso.fecha,
+      valorCompletado: progreso.valorCompletado,
+      completado: progreso.completado
+    });
 
     res.status(201).json({
       exito: true,

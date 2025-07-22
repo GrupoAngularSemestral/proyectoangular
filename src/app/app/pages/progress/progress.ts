@@ -65,11 +65,13 @@ export class ProgressPage implements OnInit, OnDestroy {
   constructor(private habitService: HabitService) {}
 
   ngOnInit() {
+    console.log('🚀 Inicializando página de progreso...');
     // Suscribirse a los cambios de hábitos para actualizar automáticamente
     this.loadProgressData();
     
     // También escuchar cambios en tiempo real
     const habitsSub = this.habitService.habits$.subscribe((habits: any[]) => {
+      console.log('📥 Hábitos recibidos en progreso:', habits);
       this.processProgressDataFromHabits(habits);
       this.isLoading = false;
     });
@@ -79,27 +81,50 @@ export class ProgressPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    // Desactivar estadísticas al salir de la página
+    this.habitService.disableStats();
   }
 
   loadProgressData() {
     this.isLoading = true;
     this.error = null;
     
-    // Forzar recarga de hábitos desde el servidor
-    this.habitService.reloadHabits();
+    // Cargar hábitos con estadísticas completas
+    this.habitService.loadHabitsWithStats();
   }
 
   private processProgressDataFromHabits(habits: any[]) {
     // Usar datos reales de progreso en lugar de simulados
+    console.log('🔍 Procesando datos de hábitos para progreso:', habits);
+    
+    habits.forEach((habit, index) => {
+      console.log(`📊 Hábito ${index + 1}:`, {
+        id: habit.id,
+        name: habit.name,
+        completions: habit.completions,
+        completedDates: habit.completedDates,
+        stats: habit.stats
+      });
+    });
     
     const weeklyData = this.generateWeeklyData(habits);
     const monthlyData = this.generateMonthlyData(habits);
+    
+    console.log('📈 Datos semanales generados:', weeklyData);
+    console.log('📈 Datos mensuales generados:', monthlyData);
     
     // Calcular estadísticas reales basadas en los datos de progreso
     const today = new Date();
     const todayCompletions = this.calculateTodayCompletions(habits, today);
     const weeklyCompletions = this.calculateWeeklyCompletions(habits);
     const monthlyCompletions = this.calculateMonthlyCompletions(habits);
+    
+    console.log('📊 Estadísticas calculadas:', {
+      totalHabits: habits.length,
+      todayCompletions,
+      weeklyCompletions,
+      monthlyCompletions
+    });
     
     // Find best day
     const bestDayIndex = weeklyData.indexOf(Math.max(...weeklyData));
@@ -139,12 +164,18 @@ export class ProgressPage implements OnInit, OnDestroy {
   private calculateTodayCompletions(habits: any[], today: Date): number {
     const todayStr = today.toISOString().split('T')[0];
     return habits.filter(habit => {
+      // Usar los datos de estadísticas si están disponibles
+      if (habit.stats && habit.stats.completadoHoy !== undefined) {
+        return habit.stats.completadoHoy;
+      }
+      
+      // Fallback: buscar en completions
       if (!habit.completions || !Array.isArray(habit.completions)) return false;
       
       return habit.completions.some((completion: any) => {
         const completionDate = new Date(completion.date);
         const completionStr = completionDate.toISOString().split('T')[0];
-        return completionStr === todayStr;
+        return completionStr === todayStr && completion.completed;
       });
     }).length;
   }
@@ -172,27 +203,39 @@ export class ProgressPage implements OnInit, OnDestroy {
   private calculateCurrentStreak(habits: any[]): number {
     if (habits.length === 0) return 0;
     
-    const today = new Date();
-    let streak = 0;
+    // Tomar la racha más alta de todos los hábitos
+    let maxStreak = 0;
     
-    // Check consecutive days backwards from today
-    for (let i = 0; i < 30; i++) { // Check last 30 days max
-      const checkDate = new Date(today);
-      checkDate.setDate(today.getDate() - i);
-      const dateStr = checkDate.toISOString().split('T')[0];
-      
-      const dayCompletions = habits.filter(habit => {
-        return habit.completedDates && habit.completedDates.includes(dateStr);
-      }).length;
-      
-      if (dayCompletions > 0) {
-        streak++;
-      } else {
-        break;
+    habits.forEach(habit => {
+      // Usar los datos de estadísticas si están disponibles
+      if (habit.stats && habit.stats.rachaActual !== undefined) {
+        maxStreak = Math.max(maxStreak, habit.stats.rachaActual);
+        return;
       }
-    }
+      
+      // Fallback: calcular racha manualmente
+      const today = new Date();
+      let streak = 0;
+      
+      // Check consecutive days backwards from today
+      for (let i = 0; i < 30; i++) { // Check last 30 days max
+        const checkDate = new Date(today);
+        checkDate.setDate(today.getDate() - i);
+        const dateStr = checkDate.toISOString().split('T')[0];
+        
+        const dayCompleted = habit.completedDates && habit.completedDates.includes(dateStr);
+        
+        if (dayCompleted) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+      
+      maxStreak = Math.max(maxStreak, streak);
+    });
     
-    return streak;
+    return maxStreak;
   }
 
   private calculateLongestStreak(habits: any[]): number {
@@ -208,24 +251,63 @@ export class ProgressPage implements OnInit, OnDestroy {
     const weekData = new Array(7).fill(0);
     const today = new Date();
     
+    console.log('📅 === GENERANDO DATOS SEMANALES ===');
+    console.log('📅 Hábitos recibidos:', habits.length);
+    
+    // Mostrar estructura de cada hábito
+    habits.forEach((habit, index) => {
+      console.log(`📋 Hábito ${index + 1}: ${habit.name}`);
+      console.log(`  - Goal: ${habit.goal} ${habit.unit}`);
+      console.log(`  - Completions:`, habit.completions);
+      console.log(`  - CompletedDates:`, habit.completedDates);
+    });
+    
     for (let i = 0; i < 7; i++) {
       const targetDate = new Date(today);
       targetDate.setDate(today.getDate() - (6 - i));
       const dateStr = targetDate.toISOString().split('T')[0];
       
-      // Count habits completed on this date
-      habits.forEach(habit => {
+      console.log(`📅 === DÍA ${i} (${dateStr}) ===`);
+      
+      let dayCompletions = 0;
+      habits.forEach((habit) => {
+        let habitCompleted = false;
+        
+        // Verificar en completions
         if (habit.completions && Array.isArray(habit.completions)) {
-          const dayCompletions = habit.completions.filter((completion: any) => {
+          const dayCompletion = habit.completions.find((completion: any) => {
             const completionDate = new Date(completion.date);
             const completionStr = completionDate.toISOString().split('T')[0];
+            console.log(`    🔍 Comparando: ${completionStr} === ${dateStr}`);
             return completionStr === dateStr;
           });
-          weekData[i] += dayCompletions.length;
+          
+          if (dayCompletion) {
+            console.log(`    📊 Progreso encontrado: ${dayCompletion.value}/${habit.goal} - Completado: ${dayCompletion.completed}`);
+            if (dayCompletion.completed) {
+              habitCompleted = true;
+            }
+          }
+        }
+        
+        // Verificar en completedDates como backup
+        if (!habitCompleted && habit.completedDates && habit.completedDates.includes(dateStr)) {
+          console.log(`    ✅ Encontrado en completedDates: ${dateStr}`);
+          habitCompleted = true;
+        }
+        
+        if (habitCompleted) {
+          dayCompletions++;
+          console.log(`    ✅ ${habit.name} COMPLETADO el ${dateStr}`);
         }
       });
+      
+      weekData[i] = dayCompletions;
+      console.log(`📈 Total completados ${dateStr}: ${dayCompletions}`);
     }
     
+    console.log('📈 === RESULTADO FINAL ===');
+    console.log('📈 Datos semanales:', weekData);
     return weekData;
   }
 

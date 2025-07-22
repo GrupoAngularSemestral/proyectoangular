@@ -14,8 +14,7 @@ const Habito = sequelize.define('Habito', {
   },
   tipo: {
     type: DataTypes.ENUM('exercise', 'water', 'sleep', 'custom'),
-    allowNull: false,
-    comment: 'Tipo de hábito: ejercicio, agua, sueño, personalizado'
+    allowNull: false
   },
   meta: {
     type: DataTypes.INTEGER,

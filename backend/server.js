@@ -9,7 +9,7 @@ const { sequelize, probarConexion } = require('./config/baseDatos');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 // Configurar limitador de velocidad
 const limiter = rateLimit({
@@ -50,7 +50,8 @@ async function inicializarBaseDatos() {
     
     // Sincronizar base de datos (crear tablas si no existen)
     await sequelize.sync({ 
-      alter: process.env.NODE_ENV === 'development' // Solo modificar en desarrollo
+      force: false, // No forzar recreación de tablas
+      alter: false  // Evitar alteraciones automáticas que pueden causar errores de sintaxis
     });
     
     console.log('✅ Tablas de la base de datos sincronizadas correctamente');

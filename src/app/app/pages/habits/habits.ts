@@ -67,6 +67,15 @@ export class Habits implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  recargarHabitos() {
+    this.habitService.reloadHabits();
+  }
+
+  limpiarCache() {
+    this.habitService.clearCacheAndReload();
+    this.mostrarExito('Caché limpiado. Datos recargados desde el servidor.');
+  }
+
   addHabit() {
     if (!this.validarHabito()) return;
 
@@ -157,6 +166,15 @@ export class Habits implements OnInit, OnDestroy {
   registrarProgreso() {
     if (!this.selectedHabitForProgress) return;
 
+    console.log('🎯 Registrando progreso desde el componente:', {
+      habitId: this.selectedHabitForProgress.id,
+      habitIdType: typeof this.selectedHabitForProgress.id,
+      progressValue: this.progressValue,
+      progressValueType: typeof this.progressValue,
+      progressNotes: this.progressNotes,
+      habitName: this.selectedHabitForProgress.name
+    });
+
     this.loading = true;
     const sub = this.habitService.registrarProgreso(
       this.selectedHabitForProgress.id,
@@ -171,7 +189,20 @@ export class Habits implements OnInit, OnDestroy {
         this.cargarHabitos();
       },
       error: (error) => {
-        this.mostrarError('Error al registrar progreso: ' + error.message);
+        console.error('❌ Error completo al registrar progreso:', error);
+        
+        // Si es un error HTTP con un cuerpo de respuesta, mostrarlo
+        if (error.error && error.error.errores) {
+          console.error('📋 Errores de validación específicos:', error.error.errores);
+          const errorMessages = error.error.errores.map((err: any) => 
+            `${err.path || err.campo}: ${err.msg || err.mensaje}`
+          ).join('; ');
+          this.mostrarError(`Error de validación: ${errorMessages}`);
+        } else if (error.error && error.error.mensaje) {
+          this.mostrarError(`Error: ${error.error.mensaje}`);
+        } else {
+          this.mostrarError('Error al registrar progreso: ' + error.message);
+        }
       },
       complete: () => {
         this.loading = false;

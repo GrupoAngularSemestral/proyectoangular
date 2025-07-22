@@ -2,6 +2,16 @@
   <div class="header-section">
     <h2>Gestión de Hábitos</h2>
     
+    <!-- Botones de acción -->
+    <div class="header-actions">
+      <button class="btn-refresh" (click)="limpiarCache()">
+        🗑️ Limpiar Caché
+      </button>
+      <button class="btn-refresh" (click)="recargarHabitos()">
+        🔄 Recargar
+      </button>
+    </div>
+    
     <!-- Mensajes de estado -->
     <div class="messages" *ngIf="errorMessage || successMessage">
       <div class="error-message" *ngIf="errorMessage">

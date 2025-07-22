@@ -1,6 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { Habito, Progreso, Recordatorio } = require('../models');
+const { Op } = require('sequelize');
 
 const router = express.Router();
 
@@ -38,9 +39,12 @@ router.post('/', [
     .withMessage('diasRepeticion debe ser un array')
 ], async (req, res) => {
   try {
+    console.log('📝 Datos recibidos para crear hábito:', JSON.stringify(req.body, null, 2));
+    
     // Verificar errores de validación
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('❌ Errores de validación:', errors.array());
       return res.status(400).json({
         exito: false,
         mensaje: 'Error en los datos enviados',
@@ -103,6 +107,10 @@ router.post('/', [
 // GET /api/habitos - Obtener todos los hábitos
 router.get('/', async (req, res) => {
   try {
+    console.log('📋 Obteniendo lista de hábitos...');
+    
+    const includeStats = req.query.includeStats === 'true';
+    
     const habitos = await Habito.findAll({
       where: { estaActivo: true },
       include: [
@@ -111,17 +119,92 @@ router.get('/', async (req, res) => {
           as: 'recordatorios',
           where: { estaActivo: true },
           required: false
+        },
+        {
+          model: Progreso,
+          as: 'registrosProgreso',
+          ...(includeStats ? {} : {
+            where: { fecha: new Date().toISOString().split('T')[0] }, // Solo progreso de hoy si no se piden stats
+          }),
+          required: false
         }
       ],
       order: [['fechaCreacion', 'DESC']]
     });
 
-    res.json({
-      exito: true,
-      datos: {
-        habitos: habitos
-      }
-    });
+    // Si se piden estadísticas, calcular datos adicionales
+    if (includeStats) {
+      const habitosConStats = await Promise.all(habitos.map(async (habito) => {
+        const habitoJson = habito.toJSON();
+        
+        // Calcular estadísticas del último mes
+        const hace30Dias = new Date();
+        hace30Dias.setDate(hace30Dias.getDate() - 30);
+        
+        const progresosUltimoMes = await Progreso.findAll({
+          where: {
+            habitoId: habito.id,
+            fecha: {
+              [Op.gte]: hace30Dias.toISOString().split('T')[0]
+            }
+          },
+          order: [['fecha', 'ASC']]
+        });
+        
+        // Calcular racha actual
+        let rachaActual = 0;
+        const hoy = new Date();
+        for (let i = 0; i < 30; i++) {
+          const fecha = new Date(hoy);
+          fecha.setDate(hoy.getDate() - i);
+          const fechaStr = fecha.toISOString().split('T')[0];
+          
+          const progresoDelDia = progresosUltimoMes.find(p => p.fecha === fechaStr);
+          if (progresoDelDia && progresoDelDia.valorCompletado >= habito.meta) {
+            rachaActual++;
+          } else {
+            break;
+          }
+        }
+        
+        // Progreso de hoy
+        const hoyStr = hoy.toISOString().split('T')[0];
+        const progresoHoy = progresosUltimoMes.find(p => p.fecha === hoyStr);
+        
+        return {
+          ...habitoJson,
+          estadisticas: {
+            rachaActual,
+            totalRegistros: progresosUltimoMes.length,
+            progresoHoy: progresoHoy ? progresoHoy.valorCompletado : 0,
+            completadoHoy: progresoHoy ? progresoHoy.valorCompletado >= habito.meta : false
+          },
+          registrosProgreso: progresosUltimoMes
+        };
+      }));
+      
+      res.json({
+        exito: true,
+        datos: {
+          habitos: habitosConStats
+        }
+      });
+    } else {
+      console.log(`📊 Se encontraron ${habitos.length} hábitos activos`);
+      console.log('📋 Hábitos:', habitos.map(h => ({ 
+        id: h.id, 
+        nombre: h.nombre, 
+        estaActivo: h.estaActivo,
+        progresoHoy: h.registrosProgreso?.length > 0 ? h.registrosProgreso[0].valorCompletado : 0
+      })));
+
+      res.json({
+        exito: true,
+        datos: {
+          habitos: habitos
+        }
+      });
+    }
 
   } catch (error) {
     console.error('Error al obtener hábitos:', error);
@@ -194,30 +277,84 @@ router.put('/:id', [
   }
 });
 
-// DELETE /api/habitos/:id - Eliminar hábito (soft delete)
+// DELETE /api/habitos/:id - Eliminar hábito (hard delete)
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    
+    console.log(`🗑️ Intentando eliminar hábito con ID: ${id} (tipo: ${typeof id})`);
 
-    const [numFilasActualizadas] = await Habito.update(
-      { estaActivo: false },
-      { where: { id, estaActivo: true } }
-    );
+    // Convertir ID a número para la consulta
+    const habitoId = parseInt(id);
+    if (isNaN(habitoId)) {
+      console.log(`❌ ID inválido: ${id}`);
+      return res.status(400).json({
+        exito: false,
+        mensaje: 'ID de hábito inválido'
+      });
+    }
 
-    if (numFilasActualizadas === 0) {
+    console.log(`🔄 ID convertido a número: ${habitoId}`);
+
+    // Primero verificar que el hábito existe
+    const habito = await Habito.findByPk(habitoId);
+    if (!habito) {
+      console.log(`❌ Hábito con ID ${habitoId} no encontrado en la base de datos`);
       return res.status(404).json({
         exito: false,
         mensaje: 'Hábito no encontrado'
       });
     }
 
+    console.log(`📋 Hábito encontrado: ${habito.nombre} (estaActivo: ${habito.estaActivo})`);
+
+    // Verificar si hay registros relacionados
+    const progresoCount = await Progreso.count({ where: { habitoId: habitoId } });
+    const recordatorioCount = await Recordatorio.count({ where: { habitoId: habitoId } });
+    
+    console.log(`📊 Registros relacionados - Progreso: ${progresoCount}, Recordatorios: ${recordatorioCount}`);
+
+    // Eliminar registros relacionados primero
+    if (progresoCount > 0) {
+      await Progreso.destroy({ where: { habitoId: habitoId } });
+      console.log(`🗑️ Eliminados ${progresoCount} registros de progreso`);
+    }
+
+    if (recordatorioCount > 0) {
+      await Recordatorio.destroy({ where: { habitoId: habitoId } });
+      console.log(`🗑️ Eliminados ${recordatorioCount} recordatorios`);
+    }
+
+    // Ahora eliminar el hábito
+    const numFilasEliminadas = await Habito.destroy({
+      where: { id: habitoId }
+    });
+
+    console.log(`🔢 Número de filas eliminadas: ${numFilasEliminadas}`);
+
+    if (numFilasEliminadas === 0) {
+      console.log(`❌ No se pudo eliminar el hábito con ID ${habitoId} de la base de datos`);
+      return res.status(500).json({
+        exito: false,
+        mensaje: 'Error al eliminar el hábito de la base de datos'
+      });
+    }
+
+    console.log(`✅ Hábito con ID ${habitoId} y todos sus registros relacionados eliminados exitosamente`);
     res.json({
       exito: true,
-      mensaje: 'Hábito eliminado exitosamente'
+      mensaje: 'Hábito eliminado exitosamente',
+      datos: {
+        habitoEliminado: habito.nombre,
+        registrosEliminados: {
+          progreso: progresoCount,
+          recordatorios: recordatorioCount
+        }
+      }
     });
 
   } catch (error) {
-    console.error('Error al eliminar hábito:', error);
+    console.error('❌ Error al eliminar hábito:', error);
     res.status(500).json({
       exito: false,
       mensaje: 'Error interno del servidor',
