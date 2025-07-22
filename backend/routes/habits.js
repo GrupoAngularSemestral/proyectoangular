@@ -2,14 +2,13 @@ const express = require('express');
 const { body, validationResult, query } = require('express-validator');
 const Habit = require('../models/Habit');
 const User = require('../models/User');
-const auth = require('../middleware/auth');
 
 const router = express.Router();
 
 // @route   GET /api/habits
 // @desc    Get all user habits
-// @access  Private
-router.get('/', [auth, [
+// @access  Public (temporarily for demo)
+router.get('/', [
   query('category')
     .optional()
     .isIn(['exercise', 'nutrition', 'sleep', 'mindfulness', 'productivity', 'health', 'learning', 'social'])
@@ -22,7 +21,7 @@ router.get('/', [auth, [
     .optional()
     .isBoolean()
     .withMessage('Active must be a boolean')
-]], async (req, res) => {
+], async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -35,9 +34,18 @@ router.get('/', [auth, [
 
     const { category, frequency, active = true } = req.query;
     
+    // Get demo user for now
+    const demoUser = await User.findOne({ email: 'demo@fittrack.com' });
+    if (!demoUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'Demo user not found'
+      });
+    }
+    
     // Build filter
     const filter = { 
-      user: req.user.userId,
+      user: demoUser._id,
       isActive: active === 'true'
     };
     
@@ -129,35 +137,56 @@ router.get('/:id', auth, async (req, res) => {
 
 // @route   POST /api/habits
 // @desc    Create new habit
-// @access  Private
-router.post('/', [auth, [
+// @access  Public (demo)
+router.post('/', [
   body('title')
+    .optional()
     .trim()
     .isLength({ min: 1, max: 100 })
     .withMessage('Title must be between 1 and 100 characters'),
+  body('name')
+    .optional()
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('Name must be between 1 and 100 characters'),
   body('description')
     .optional()
     .trim()
     .isLength({ max: 500 })
     .withMessage('Description cannot exceed 500 characters'),
   body('category')
+    .optional()
     .isIn(['exercise', 'nutrition', 'sleep', 'mindfulness', 'productivity', 'health', 'learning', 'social'])
     .withMessage('Invalid category'),
+  body('type')
+    .optional()
+    .isIn(['exercise', 'nutrition', 'sleep', 'mindfulness', 'productivity', 'health', 'learning', 'social', 'custom', 'water'])
+    .withMessage('Invalid type'),
   body('frequency')
     .optional()
     .isIn(['daily', 'weekly', 'monthly'])
     .withMessage('Invalid frequency'),
+  body('goal')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('Goal must be a positive integer'),
   body('target.value')
+    .optional()
     .isInt({ min: 1 })
     .withMessage('Target value must be a positive integer'),
   body('target.unit')
+    .optional()
     .isIn(['times', 'minutes', 'hours', 'glasses', 'pages', 'kilometers', 'steps'])
     .withMessage('Invalid target unit'),
+  body('unit')
+    .optional()
+    .isString()
+    .withMessage('Unit must be a string'),
   body('color')
     .optional()
     .matches(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
     .withMessage('Color must be a valid hex color')
-]], async (req, res) => {
+], async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -168,16 +197,36 @@ router.post('/', [auth, [
       });
     }
 
+    // Get or create demo user
+    let demoUser = await User.findOne({ email: 'demo@fittrack.com' });
+    if (!demoUser) {
+      demoUser = new User({
+        name: 'Usuario Demo',
+        email: 'demo@fittrack.com',
+        password: 'demo123' // No real password needed
+      });
+      await demoUser.save();
+    }
+
+    // Create habit data - support both frontend formats
     const habitData = {
-      ...req.body,
-      user: req.user.userId
+      title: req.body.title || req.body.name,
+      description: req.body.description || '',
+      category: req.body.category || req.body.type || 'custom',
+      frequency: req.body.frequency || 'daily',
+      target: req.body.target || {
+        value: req.body.goal || 1,
+        unit: req.body.unit || 'times'
+      },
+      color: req.body.color || '#3B82F6',
+      user: demoUser._id
     };
 
     const habit = new Habit(habitData);
     await habit.save();
 
     // Update user stats
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(demoUser._id);
     await user.updateStats({ 
       totalHabits: user.stats.totalHabits + 1 
     });

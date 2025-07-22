@@ -48,8 +48,7 @@ async function initializeDatabase() {
   }
 }
 
-// Routes
-app.use('/api/auth', require('./routes/auth'));
+// Routes - Main application routes
 app.use('/api/users', require('./routes/users'));
 app.use('/api/habits', require('./routes/habits'));
 app.use('/api/achievements', require('./routes/achievements'));
