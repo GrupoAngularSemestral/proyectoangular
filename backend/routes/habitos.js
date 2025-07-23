@@ -159,25 +159,30 @@ router.get('/', async (req, res) => {
           fecha.setDate(hoy.getDate() - i);
           const fechaStr = fecha.toISOString().split('T')[0];
           
-          const progresoDelDia = progresosUltimoMes.find(p => p.fecha === fechaStr);
-          if (progresoDelDia && progresoDelDia.valorCompletado >= habito.meta) {
+          // Sumar todos los registros de progreso del día
+          const progresosDelDia = progresosUltimoMes.filter(p => p.fecha === fechaStr);
+          const totalDelDia = progresosDelDia.reduce((sum, p) => sum + p.valorCompletado, 0);
+          
+          if (totalDelDia >= habito.meta) {
             rachaActual++;
           } else {
             break;
           }
         }
         
-        // Progreso de hoy
+        // Progreso de hoy - sumar todos los registros del día
         const hoyStr = hoy.toISOString().split('T')[0];
-        const progresoHoy = progresosUltimoMes.find(p => p.fecha === hoyStr);
+        const progresosHoy = progresosUltimoMes.filter(p => p.fecha === hoyStr);
+        const progresoTotalHoy = progresosHoy.reduce((sum, p) => sum + p.valorCompletado, 0);
         
         return {
           ...habitoJson,
           estadisticas: {
             rachaActual,
             totalRegistros: progresosUltimoMes.length,
-            progresoHoy: progresoHoy ? progresoHoy.valorCompletado : 0,
-            completadoHoy: progresoHoy ? progresoHoy.valorCompletado >= habito.meta : false
+            progresoHoy: progresoTotalHoy,
+            completadoHoy: progresoTotalHoy >= habito.meta,
+            registrosHoy: progresosHoy.length
           },
           registrosProgreso: progresosUltimoMes
         };

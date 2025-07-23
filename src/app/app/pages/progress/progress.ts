@@ -315,26 +315,39 @@ export class ProgressPage implements OnInit, OnDestroy {
     const monthData = new Array(4).fill(0);
     const today = new Date();
     
+    console.log('📅 === GENERANDO DATOS MENSUALES ===');
+    console.log('📅 Hábitos recibidos:', habits.length);
+    
     for (let week = 0; week < 4; week++) {
       const weekStart = new Date(today);
       weekStart.setDate(today.getDate() - (today.getDate() % 7) - (21 - week * 7));
       
+      console.log(`📅 === SEMANA ${week + 1} (desde ${weekStart.toISOString().split('T')[0]}) ===`);
+      
+      let weekCompletions = 0;
       for (let day = 0; day < 7; day++) {
         const targetDate = new Date(weekStart);
         targetDate.setDate(weekStart.getDate() + day);
+        const dateStr = targetDate.toISOString().split('T')[0];
         
         habits.forEach(habit => {
           if (habit.completions && Array.isArray(habit.completions)) {
             const dayCompletions = habit.completions.filter((completion: any) => {
               const completionDate = new Date(completion.date);
-              return completionDate.toDateString() === targetDate.toDateString();
+              const completionStr = completionDate.toISOString().split('T')[0];
+              return completionStr === dateStr && completion.completed;
             });
-            monthData[week] += dayCompletions.length;
+            weekCompletions += dayCompletions.length;
           }
         });
       }
+      
+      monthData[week] = weekCompletions;
+      console.log(`📈 Semana ${week + 1} completados: ${weekCompletions}`);
     }
     
+    console.log('📈 === RESULTADO MENSUAL ===');
+    console.log('📈 Datos mensuales:', monthData);
     return monthData;
   }
 
@@ -399,6 +412,11 @@ export class ProgressPage implements OnInit, OnDestroy {
   }
 
   reloadData() {
-    this.loadProgressData();
+    console.log('🔄 Recargando datos de progreso manualmente...');
+    this.isLoading = true;
+    this.error = null;
+    
+    // Forzar recarga con estadísticas si estamos en la página de progreso
+    this.habitService.loadHabitsWithStats();
   }
 }

@@ -71,38 +71,18 @@ router.post('/', [
 
     console.log(`📈 Calculando progreso: ${valorCompletado}/${habito.meta} = ${porcentajeCompletado.toFixed(1)}% (${completado ? 'COMPLETADO' : 'PENDIENTE'})`);
 
-    // Verificar si ya existe un registro para este hábito y fecha
-    const registroExistente = await Progreso.findOne({
-      where: { habitoId, fecha }
+    // Crear nuevo registro (permitir múltiples registros por día)
+    const progreso = await Progreso.create({
+      habitoId,
+      fecha,
+      valorCompletado,
+      metaDelDia: habito.meta,
+      porcentajeCompletado,
+      completado,
+      notas
     });
-
-    console.log(`📋 Registro existente para ${fecha}:`, registroExistente ? 'SÍ (actualizando)' : 'NO (creando nuevo)');
-
-    let progreso;
-    if (registroExistente) {
-      // Actualizar registro existente
-      await registroExistente.update({
-        valorCompletado,
-        metaDelDia: habito.meta,
-        porcentajeCompletado,
-        completado,
-        notas
-      });
-      progreso = registroExistente;
-      console.log(`✅ Registro actualizado - ID: ${progreso.id}`);
-    } else {
-      // Crear nuevo registro
-      progreso = await Progreso.create({
-        habitoId,
-        fecha,
-        valorCompletado,
-        metaDelDia: habito.meta,
-        porcentajeCompletado,
-        completado,
-        notas
-      });
-      console.log(`✅ Nuevo registro creado - ID: ${progreso.id}`);
-    }
+    
+    console.log(`✅ Nuevo registro creado - ID: ${progreso.id}`);
 
     console.log(`📊 Progreso final:`, {
       id: progreso.id,

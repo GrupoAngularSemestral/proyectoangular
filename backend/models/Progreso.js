@@ -57,9 +57,8 @@ const Progreso = sequelize.define('Progreso', {
   comment: 'Tabla de progreso diario de los hábitos',
   indexes: [
     {
-      unique: true,
       fields: ['habitoId', 'fecha'],
-      name: 'progreso_habito_fecha_unico'
+      name: 'progreso_habito_fecha_indice'
     }
   ]
 });
