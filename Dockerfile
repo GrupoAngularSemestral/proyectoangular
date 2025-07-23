@@ -25,7 +25,7 @@ COPY . .
 # Exponer puertos
 # 4200 para Angular (ng serve por defecto)
 # 5000 para Node.js (ajusta según tu configuración)
-EXPOSE 4200 5000
+EXPOSE 4200
 
 RUN chmod +x start.sh
 
