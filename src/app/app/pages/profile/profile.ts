@@ -150,6 +150,15 @@ export class ProfilePage implements OnInit, OnDestroy {
     return 'imc-obesidad';
   }
 
+  obtenerTextoIMC(): string {
+    const imc = this.calcularIMC();
+    if (imc === 0) return '';
+    if (imc < 18.5) return 'Bajo Peso';
+    if (imc < 25) return 'Peso Normal';
+    if (imc < 30) return 'Sobrepeso';
+    return 'Obesidad';
+  }
+
   guardarPerfil() {
     if (!this.validarPerfil()) return;
 

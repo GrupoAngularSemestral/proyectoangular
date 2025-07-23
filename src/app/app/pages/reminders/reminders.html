@@ -1,22 +1,23 @@
-<section class="reminders-page container">
-  <div class="page-header">
-    <h1>📅 Recordatorios</h1>
-    <p>Configura notificaciones para mantener la consistencia en tus hábitos</p>
-  </div>
+<section class="reminders-page">
+  <div class="container">
+    <div class="page-header">
+      <h1>� Recordatorios Inteligentes</h1>
+      <p>Mantén tus hábitos en el camino correcto con notificaciones personalizadas</p>
+    </div>
 
-  <!-- Estado de permisos -->
-  <div class="permission-status" *ngIf="!permission.granted">
-    <div class="permission-card">
-      <div class="permission-icon">🔔</div>
-      <div class="permission-content">
-        <h3>Habilita las notificaciones</h3>
-        <p>Para recibir recordatorios, necesitamos tu permiso para mostrar notificaciones.</p>
-        <button class="btn btn-primary" (click)="requestPermission()" [disabled]="permission.requested">
-          {{ permission.requested ? 'Permisos denegados' : 'Permitir notificaciones' }}
-        </button>
+    <!-- Estado de permisos -->
+    <div class="permission-status" *ngIf="!permission.granted">
+      <div class="permission-card">
+        <div class="permission-icon">🔔</div>
+        <div class="permission-content">
+          <h3>Activa las Notificaciones</h3>
+          <p>Para recibir recordatorios personalizados, necesitamos tu permiso para mostrar notificaciones en tu navegador.</p>
+          <button class="btn btn-primary" (click)="requestPermission()" [disabled]="permission.requested">
+            {{ permission.requested ? '❌ Permisos Denegados' : '✅ Permitir Notificaciones' }}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
   <!-- Acciones principales -->
   <div class="actions-bar" *ngIf="permission.granted">
@@ -155,4 +156,4 @@
       </div>
     </div>
   </div>
-</section>
+</div>
