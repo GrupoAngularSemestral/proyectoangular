@@ -1,4 +1,138 @@
-<h1>Exportar datos</h1>
-<p>Descarga tu historial de hábitos en PDF o CSV para compartirlo con profesionales de la salud o para tu propio seguimiento.</p>
-<button>Exportar a PDF</button>
-<button>Exportar a CSV</button>
+<div class="export-page">
+  <div class="export-container">
+    <!-- Header -->
+    <div class="export-header">
+      <h1>📊 Exportar Datos</h1>
+      <p>Genera reportes profesionales de tu progreso para compartir con médicos, nutricionistas o entrenadores personales.</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading">
+      <div class="loading-spinner"></div>
+      <p>{{ loadingMessage || 'Preparando exportación...' }}</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error-message">
+      <p>❌ {{ error }}</p>
+      <button class="btn-retry" (click)="cargarDatos()">Reintentar</button>
+    </div>
+
+    <!-- Filtros -->
+    <div *ngIf="!loading && !error" class="export-filters">
+      <h3>📅 Período de Exportación</h3>
+      <div class="filter-options">
+        <div class="filter-group">
+          <label for="tipoFiltro">Período:</label>
+          <select id="tipoFiltro" [(ngModel)]="filtros.tipoFiltro" (ngModelChange)="actualizarFiltroFecha()">
+            <option value="todo">Todo el historial</option>
+            <option value="ultimo-mes">Último mes</option>
+            <option value="ultimos-3-meses">Últimos 3 meses</option>
+            <option value="ultimo-semestre">Último semestre</option>
+            <option value="personalizado">Personalizado</option>
+          </select>
+        </div>
+        
+        <div *ngIf="filtros.tipoFiltro === 'personalizado'" class="filter-dates">
+          <div class="form-group">
+            <label for="desde">Desde:</label>
+            <input type="date" id="desde" [(ngModel)]="filtros.desde">
+          </div>
+          <div class="form-group">
+            <label for="hasta">Hasta:</label>
+            <input type="date" id="hasta" [(ngModel)]="filtros.hasta">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido a exportar -->
+    <div *ngIf="!loading && !error" class="export-content">
+      <h3>📋 Contenido a Incluir</h3>
+      <div class="content-options">
+        <label class="checkbox-option">
+          <input type="checkbox" [(ngModel)]="filtros.incluirHabitos">
+          <span class="checkmark"></span>
+          📝 Hábitos registrados
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" [(ngModel)]="filtros.incluirProgreso">
+          <span class="checkmark"></span>
+          📈 Registros de progreso
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" [(ngModel)]="filtros.incluirLogros">
+          <span class="checkmark"></span>
+          🏆 Logros obtenidos
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" [(ngModel)]="filtros.incluirEstadisticas">
+          <span class="checkmark"></span>
+          📊 Estadísticas y análisis
+        </label>
+      </div>
+    </div>
+
+    <!-- Vista previa -->
+    <div *ngIf="!loading && !error && vistaPrevia" class="export-preview">
+      <h3>👀 Vista Previa</h3>
+      <div class="preview-stats">
+        <div class="preview-stat">
+          <strong>{{ vistaPrevia.totalHabitos }}</strong>
+          <span>Hábitos</span>
+        </div>
+        <div class="preview-stat">
+          <strong>{{ vistaPrevia.totalProgreso }}</strong>
+          <span>Registros</span>
+        </div>
+        <div class="preview-stat">
+          <strong>{{ vistaPrevia.totalLogros }}</strong>
+          <span>Logros</span>
+        </div>
+        <div class="preview-stat">
+          <strong>{{ vistaPrevia.porcentajeExito }}%</strong>
+          <span>Éxito</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Opciones de exportación -->
+    <div *ngIf="!loading && !error" class="export-options">
+      <h3>💾 Formato de Exportación</h3>
+      <div class="export-buttons">
+        <button 
+          class="btn-export btn-pdf" 
+          (click)="exportarPDF()"
+          [disabled]="exportando || !puedeExportar">
+          {{ exportando && tipoExportacion === 'pdf' ? '⏳ Generando...' : '📄 Exportar como PDF' }}
+          <small>Reporte profesional para impresión</small>
+        </button>
+        
+        <button 
+          class="btn-export btn-csv" 
+          (click)="exportarCSV()"
+          [disabled]="exportando || !puedeExportar">
+          {{ exportando && tipoExportacion === 'csv' ? '⏳ Preparando...' : '📊 Exportar como CSV' }}
+          <small>Datos estructurados para análisis</small>
+        </button>
+        
+        <button 
+          class="btn-export btn-json" 
+          (click)="exportarJSON()"
+          [disabled]="exportando || !puedeExportar">
+          {{ exportando && tipoExportacion === 'json' ? '⏳ Preparando...' : '🔧 Exportar como JSON' }}
+          <small>Datos completos para desarrolladores</small>
+        </button>
+      </div>
+      
+      <div *ngIf="!puedeExportar" class="export-warning">
+        ⚠️ Selecciona al menos un tipo de contenido para exportar
+      </div>
+    </div>
+
+    <!-- Mensaje de éxito -->
+    <div *ngIf="mensajeExito" class="success-message">
+      ✅ {{ mensajeExito }}
+    </div>
+  </div>
+</div>
