@@ -46,7 +46,7 @@ const Usuario = sequelize.define('Usuario', {
     defaultValue: 2.0,
     comment: 'Meta de consumo de agua en litros por día'
   },
-  metaSueño: {
+  metaSueno: {
     type: DataTypes.INTEGER,
     defaultValue: 8,
     comment: 'Meta de horas de sueño por día'

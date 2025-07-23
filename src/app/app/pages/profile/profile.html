@@ -1,11 +1,235 @@
-<section class="profile-page container">
-  <h1>Mi Perfil</h1>
-  <div class="profile-card">
-    <img src="/assets/user-avatar.png" alt="Avatar usuario" class="avatar" />
-    <div class="info">
-      <p><strong>Nombre:</strong> Juan Pérez</p>
-      <p><strong>Email:</strong> juan.perez&#64;example.com</p>
-      <button class="btn-edit">Editar perfil</button>
+<div class="profile-page">
+  <div class="profile-container">
+    <!-- Header -->
+    <div class="profile-header">
+      <h1>👤 Mi Perfil</h1>
+      <p>Personaliza tus metas y configuraciones para una experiencia más efectiva</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading">
+      <div class="loading-spinner"></div>
+      <p>Cargando perfil...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error-message">
+      <p>❌ {{ error }}</p>
+      <button class="btn-retry" (click)="cargarPerfil()">Reintentar</button>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="mensajeExito" class="success-message">
+      ✅ {{ mensajeExito }}
+    </div>
+
+    <!-- Profile Content -->
+    <div *ngIf="!loading && !error" class="profile-content">
+      
+      <!-- Información Personal -->
+      <div class="profile-section">
+        <h3>📝 Información Personal</h3>
+        <div class="section-content">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nombre">Nombre completo:</label>
+              <input 
+                type="text" 
+                id="nombre"
+                [(ngModel)]="perfilUsuario.nombre" 
+                placeholder="Tu nombre completo">
+            </div>
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input 
+                type="email" 
+                id="email"
+                [(ngModel)]="perfilUsuario.email" 
+                placeholder="tu.email@ejemplo.com">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fechaNacimiento">Fecha de nacimiento:</label>
+              <input 
+                type="date" 
+                id="fechaNacimiento"
+                [(ngModel)]="perfilUsuario.fechaNacimiento">
+            </div>
+            <div class="form-group">
+              <label for="genero">Género:</label>
+              <select id="genero" [(ngModel)]="perfilUsuario.genero">
+                <option value="">Seleccionar...</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Medidas Corporales -->
+      <div class="profile-section">
+        <h3>📏 Medidas Corporales</h3>
+        <div class="section-content">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="altura">Altura (cm):</label>
+              <input 
+                type="number" 
+                id="altura"
+                [(ngModel)]="perfilUsuario.altura" 
+                placeholder="170"
+                min="100" 
+                max="250">
+            </div>
+            <div class="form-group">
+              <label for="peso">Peso (kg):</label>
+              <input 
+                type="number" 
+                id="peso"
+                [(ngModel)]="perfilUsuario.peso" 
+                placeholder="70"
+                min="30" 
+                max="300"
+                step="0.1">
+            </div>
+          </div>
+          
+          <div *ngIf="perfilUsuario.altura && perfilUsuario.peso" class="imc-display">
+            <div class="imc-card">
+              <strong>IMC: {{ calcularIMC().toFixed(1) }}</strong>
+              <span class="imc-categoria" [class]="obtenerClaseIMC()">
+                {{ obtenerCategoriaIMC() }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metas Personalizadas -->
+      <div class="profile-section metas-section">
+        <h3>🎯 Metas Personalizadas</h3>
+        <div class="section-content">
+          
+          <!-- Meta de Agua -->
+          <div class="meta-card">
+            <div class="meta-icon">💧</div>
+            <div class="meta-content">
+              <h4>Consumo de Agua</h4>
+              <div class="meta-input">
+                <input 
+                  type="number" 
+                  [(ngModel)]="perfilUsuario.metaAgua"
+                  min="1" 
+                  max="10" 
+                  step="0.1">
+                <span class="meta-unit">litros/día</span>
+              </div>
+              <p class="meta-description">
+                Recomendado: 2-3 litros diarios para un adulto promedio
+              </p>
+            </div>
+          </div>
+
+          <!-- Meta de Sueño -->
+          <div class="meta-card">
+            <div class="meta-icon">😴</div>
+            <div class="meta-content">
+              <h4>Horas de Sueño</h4>
+              <div class="meta-input">
+                <input 
+                  type="number" 
+                  [(ngModel)]="perfilUsuario.metaSueno"
+                  min="4" 
+                  max="12" 
+                  step="0.5">
+                <span class="meta-unit">horas/noche</span>
+              </div>
+              <p class="meta-description">
+                Recomendado: 7-9 horas para un adulto
+              </p>
+            </div>
+          </div>
+
+          <!-- Nivel de Actividad -->
+          <div class="meta-card full-width">
+            <div class="meta-icon">🏃‍♂️</div>
+            <div class="meta-content">
+              <h4>Nivel de Actividad</h4>
+              <select [(ngModel)]="perfilUsuario.nivelActividad" class="meta-select">
+                <option value="Sedentario">🪑 Sedentario - Poco o ningún ejercicio</option>
+                <option value="Ligero">🚶‍♂️ Ligero - Ejercicio ligero 1-3 días/semana</option>
+                <option value="Moderado">🏃‍♂️ Moderado - Ejercicio moderado 3-5 días/semana</option>
+                <option value="Activo">💪 Activo - Ejercicio intenso 6-7 días/semana</option>
+                <option value="Muy Activo">🔥 Muy Activo - Ejercicio muy intenso o trabajo físico</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Objetivo Fitness -->
+          <div class="meta-card full-width">
+            <div class="meta-icon">🎯</div>
+            <div class="meta-content">
+              <h4>Objetivo Principal</h4>
+              <select [(ngModel)]="perfilUsuario.objetivoFitness" class="meta-select">
+                <option value="Bajar Peso">⬇️ Bajar de peso</option>
+                <option value="Mantener Peso">⚖️ Mantener peso actual</option>
+                <option value="Subir Peso">⬆️ Subir de peso</option>
+                <option value="Ganar Músculo">💪 Ganar masa muscular</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Configuraciones -->
+      <div class="profile-section">
+        <h3>⚙️ Configuraciones</h3>
+        <div class="section-content">
+          <div class="config-options">
+            <label class="config-option">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="perfilUsuario.notificacionesActivas">
+              <span class="config-icon">🔔</span>
+              <div class="config-content">
+                <strong>Notificaciones activas</strong>
+                <p>Recibir recordatorios de hábitos</p>
+              </div>
+            </label>
+
+            <div class="config-option">
+              <span class="config-icon">🎨</span>
+              <div class="config-content">
+                <strong>Tema de la aplicación</strong>
+                <select [(ngModel)]="perfilUsuario.tema" class="config-select">
+                  <option value="Claro">☀️ Claro</option>
+                  <option value="Oscuro">🌙 Oscuro</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="profile-actions">
+        <button 
+          class="btn-primary btn-save" 
+          (click)="guardarPerfil()"
+          [disabled]="guardando">
+          {{ guardando ? '⏳ Guardando...' : '💾 Guardar Cambios' }}
+        </button>
+        <button 
+          class="btn-secondary" 
+          (click)="resetearPerfil()"
+          [disabled]="guardando">
+          🔄 Restablecer
+        </button>
+      </div>
     </div>
   </div>
-</section>
+</div>

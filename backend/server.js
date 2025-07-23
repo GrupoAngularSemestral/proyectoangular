@@ -141,6 +141,7 @@ async function inicializarLogros() {
 }
 
 // Rutas de la API
+app.use('/api/users', require('./routes/users'));
 app.use('/api/habitos', require('./routes/habitos'));
 app.use('/api/progreso', require('./routes/progreso'));
 app.use('/api/logros', require('./routes/logros'));
